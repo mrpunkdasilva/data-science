@@ -7,4 +7,5 @@
                  start-page="Default-topic.md">
 
     <toc-element topic="Default-topic.md"/>
+    <toc-element topic="Atividade-2.md"/>
 </instance-profile>
