@@ -1,5 +1,7 @@
 # Atividade 1
 
+> Gitlab: [https://gitlab.com/gustajesus/data-science/-/tree/main/labs/lab-1?ref_type=heads](https://gitlab.com/gustajesus/data-science/-/tree/main/labs/lab-1?ref_type=heads)
+
 ## Fundamentos
 
 Nesta atividade, trabalhei com o **Wisconsin Diagnostic Cancer Dataset**, um conjunto de dados amplamente utilizado em machine learning para classificação de câncer de mama. O dataset contém características computadas a partir de imagens digitalizadas de aspirados por agulha fina (FNA) de amostras de tecido mamário.
