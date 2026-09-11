@@ -1,0 +1,218 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+        .article {
+            position: relative;
+            padding-bottom: 24px;
+        }
+        
+
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+
+        .center-text {
+            text-align: center;
+        }
+        
+
+        .container {
+            max-width: 100%;
+            overflow: hidden;
+            page-break-inside: avoid;
+            display: block;
+        }
+        
+
+        .detached {
+            margin-block-start: 0;
+            margin-block-end: 0;
+            margin-bottom: 8px;
+        }
+        
+
+        .image {
+            max-width: 100%;
+            max-height: 90vh;
+            height: auto;
+        }
+        
+
+        .image-container {
+            max-width: 100vw;
+        }
+        
+
+        .image-size {
+            height: auto;
+        }
+        
+
+        .list {
+            list-style-type: disc;
+            padding-left: 0;
+            margin-left: 15px;
+        }
+        
+
+        .list-item {
+            margin-top: 6px;
+            margin-bottom: 6px;
+            margin-left: 4px;
+        }
+        
+
+        .main-title {
+            padding-bottom: 24px;
+            margin-top: 0;
+            font-size: 40px;
+            margin-block-start: 0;
+            margin-block-end: 0;
+        }
+        
+
+        :root {
+            width: 95%;
+            max-width: 95vw;
+            padding: 0 0 0 30px;
+        }
+        
+        body {
+            font-family: JetBrains Sans,serif;
+        }
+        
+        a {
+            overflow-wrap: anywhere;
+            width: 100vw;
+        }
+        
+        
+        @font-face {
+            font-family: JetBrains Sans;
+            src: url(https://resources.jetbrains.com/storage/jetbrains-sans/JetBrainsSans-Light.woff2) format("woff2"), url(https://resources.jetbrains.com/storage/jetbrains-sans/JetBrainsSans-Light.woff) format("woff");
+            font-weight: 300;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: JetBrains Sans;
+            src: url(https://resources.jetbrains.com/storage/jetbrains-sans/JetBrainsSans-Regular.woff2) format("woff2"), url(https://resources.jetbrains.com/storage/jetbrains-sans/JetBrainsSans-Regular.woff) format("woff");
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: JetBrains Sans;
+            src: url(https://resources.jetbrains.com/storage/jetbrains-sans/JetBrainsSans-SemiBold.woff2) format("woff2"), url(https://resources.jetbrains.com/storage/jetbrains-sans/JetBrainsSans-SemiBold.woff) format("woff");
+            font-weight: 600;
+            font-style: normal;
+        }
+        
+        
+        code {
+            display: inline;
+            word-break: break-word;
+            font-size: 15px;
+            line-height: inherit;
+            font-variant-ligatures: none;
+            font-family: JetBrains Sans,monospace;
+            white-space: pre-line;
+            overflow-wrap: break-word;
+        }
+        
+        figcaption {
+            margin-top: 5px;
+        }
+        
+        h2 {
+            padding-top: 16px;
+            padding-bottom: 8px;
+            margin-block-start: 0;
+            margin-block-end: 0;
+        }
+        
+        h3 {
+            padding-top: 8px;
+            padding-bottom: 8px;
+            margin-block-start: 0;
+            margin-block-end: 0;
+        }
+        
+        h4 {
+            padding-top: 4px;
+            padding-bottom: 8px;
+            margin-block-start: 0;
+            margin-block-end: 0;
+        }
+        
+        p {
+            padding: 0;
+            border: 0;
+            line-height: 25px;
+            margin-block-start: 0;
+            margin-block-end: 0;
+            padding-bottom: 8px;
+        }
+        
+        div {
+            display: block;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            page-break-inside: avoid;
+        }
+        
+        th, td {
+            border: 1px solid #c4c4c4;
+            padding: 10px;
+            text-align: left;
+            word-break: break-all;
+        }
+        
+        .no-bold {
+            font-weight: normal; 
+        }
+        
+        .entry {
+            display: grid;
+            grid-template-columns: auto max-content;
+            grid-template-areas: "chapter page";
+            align-items: end;
+            gap: 0 .25rem;
+            line-height: 25px;
+        }
+        
+        .toc-link-container{
+            grid-area: chapter;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .toc-link{
+            text-decoration: none;
+            color: black;
+        }
+        
+        .toc-link-container::after {
+            position: absolute;
+            padding-left: .25ch;
+            content: " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . "
+            ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . "
+            ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
+            text-align: right;
+        }
+        
+        .page {
+            grid-area: page;
+            width: 30px;
+            text-align: right;
+        }
+        
+
+        .topic {
+            page-break-before: always;
+        }
+        </style><title>pdfSourceT1</title></head><body><div><section class="topic"><div><article class="article"><h1 class="main-title">Table of Contents</h1><div class="entry"><div class="toc-link-container"><a class="toc-link" href="#-512279951">Tarefa 1 - An&aacute;lise Explorat&oacute;ria de Dados</a></div><div class="page">2</div></div><div class="entry"><div class="toc-link-container"><a class="toc-link" href="#-379143904">Tarefa 2 - Sess&atilde;o Interativa de Pesquisa sobre Refer&ecirc;ncias de Artigos</a></div><div class="page">7</div></div></article></div></section><section class="topic"><div><article class="article"><h1 class="main-title" id="-512279951">Tarefa 1 - An&aacute;lise Explorat&oacute;ria de Dados</h1><section class="detached"><h2 id="-512279951#introdu-o" data-toc="introdu-o#starter-topic.md-introdu-o">Introdu&ccedil;&atilde;o</h2><p id="-512279951#-fl7ist_9">Nesta tarefa, explorei um conjunto de dados contendo informa&ccedil;&otilde;es sobre dois grupos de participantes, denominados Grupo A e Grupo B. O meu objetivo principal foi compreender as caracter&iacute;sticas dos dados, identificar padr&otilde;es e verificar se existem diferen&ccedil;as relevantes entre os grupos em rela&ccedil;&atilde;o a duas vari&aacute;veis: n&uacute;mero de passos di&aacute;rios (Steps) e &iacute;ndice de massa corporal (BMI).</p></section><section class="detached"><h2 id="-512279951#sobre-os-dados" data-toc="sobre-os-dados#starter-topic.md-sobre-os-dados">Sobre os Dados</h2><p id="-512279951#-fl7ist_10">O conjunto de dados &eacute; composto por dois arquivos de texto formatados como CSV, cada um representando um grupo diferente de participantes. Ambos os arquivos possuem tr&ecirc;s colunas: um identificador &uacute;nico (ID), a quantidade de passos registrados em um per&iacute;odo e o BMI do participante.</p><p id="-512279951#-fl7ist_11">O Grupo A possui 865 participantes, enquanto o Grupo B conta com 921 participantes. Essa diferen&ccedil;a no tamanho das amostras j&aacute; &eacute; um ponto importante a considerar em eventuais compara&ccedil;&otilde;es estat&iacute;sticas futuras, embora n&atilde;o comprometa a an&aacute;lise explorat&oacute;ria realizada aqui.</p></section><section class="detached"><h2 id="-512279951#an-lise-descritiva" data-toc="an-lise-descritiva#starter-topic.md-an-lise-descritiva">An&aacute;lise Descritiva</h2><section class="detached"><h3 id="-512279951#grupo-a" data-toc="grupo-a#starter-topic.md-grupo-a">Grupo A</h3><p id="-512279951#-fl7ist_14">Ao calcular as estat&iacute;sticas descritivas do Grupo A, observei que a m&eacute;dia de passos di&aacute;rios ficou em torno de 8.997, com um desvio padr&atilde;o de 3.407. Isso indica uma variabilidade consider&aacute;vel entre os participantes, uma vez que alguns registraram apenas 3.011 passos enquanto outros atingiram quase 15.000. A mediana de 9.075 est&aacute; bem pr&oacute;xima da m&eacute;dia, sugerindo uma distribui&ccedil;&atilde;o relativamente sim&eacute;trica para os passos.</p><p id="-512279951#-fl7ist_15">Em rela&ccedil;&atilde;o ao BMI, a m&eacute;dia foi de 26,02, com desvio padr&atilde;o de 3,86. Os valores variaram de 12,8 (abaixo do peso) at&eacute; 38,6 (obesidade grau I). A mediana de 25,9 praticamente coincide com a m&eacute;dia, refor&ccedil;ando a simetria da distribui&ccedil;&atilde;o.</p></section><section class="detached"><h3 id="-512279951#grupo-b" data-toc="grupo-b#starter-topic.md-grupo-b">Grupo B</h3><p id="-512279951#-fl7ist_16">O Grupo B apresentou resultados bastante semelhantes. A m&eacute;dia de passos foi de 9.061, praticamente igual &agrave; do Grupo A, com um desvio padr&atilde;o ligeiramente maior (3.493). A faixa de valores tamb&eacute;m foi similar, variando de 3.015 a 14.993 passos.</p><p id="-512279951#-fl7ist_17">Para o BMI, a m&eacute;dia foi de 25,88, praticamente id&ecirc;ntica ao Grupo A. No entanto, o desvio padr&atilde;o foi um pouco maior (4,03), e o valor m&aacute;ximo atingiu 42,3, um ponto que chama aten&ccedil;&atilde;o e que discuto adiante.</p></section></section><section class="detached"><h2 id="-512279951#visualiza-es" data-toc="visualiza-es#starter-topic.md-visualiza-es">Visualiza&ccedil;&otilde;es</h2><section class="detached"><h3 id="-512279951#distribui-o-de-passos" data-toc="distribui-o-de-passos#starter-topic.md-distribui-o-de-passos">Distribui&ccedil;&atilde;o de Passos</h3><div class="container"><figure class="image-container"><img class="center image image-size" id="-512279951#-fl7ist_21" alt="Steps Boxplot" title="Steps Boxplot" src="/home/mrpunkdasilva/WebstormProjects/data-science/assignments/assignment-1/Writerside/images/steps_boxplot.png" width="1000" height="600"><figcaption class="center-text">Steps Boxplot</figcaption></figure></div><p id="-512279951#-fl7ist_22">O boxplot de passos mostra uma semelhan&ccedil;a not&aacute;vel entre os dois grupos. As medianas est&atilde;o praticamente alinhadas em torno de 9.000 passos, e a dispers&atilde;o &eacute; muito parecida. Os dois grupos apresentam uma cauda superior mais longa, indicando que h&aacute; mais participantes com altas contagens de passos do que com valores muito baixos. N&atilde;o h&aacute; outliers evidentes nesta vari&aacute;vel, o que sugere que os valores extremos est&atilde;o dentro de uma faixa esperada para o tipo de atividade monitorada.</p></section><section class="detached"><h3 id="-512279951#distribui-o-de-bmi" data-toc="distribui-o-de-bmi#starter-topic.md-distribui-o-de-bmi">Distribui&ccedil;&atilde;o de BMI</h3><div class="container"><figure class="image-container"><img class="center image image-size" id="-512279951#-fl7ist_23" alt="BMI Boxplot" title="BMI Boxplot" src="/home/mrpunkdasilva/WebstormProjects/data-science/assignments/assignment-1/Writerside/images/bmi_boxplot.png" width="1000" height="600"><figcaption class="center-text">BMI Boxplot</figcaption></figure></div><p id="-512279951#-fl7ist_24">No boxplot de BMI, as distribui&ccedil;&otilde;es tamb&eacute;m s&atilde;o bastante similares entre os grupos, com medianas em torno de 25,9, valor que se encontra na faixa de &quot;sobrepeso&quot; segundo classifica&ccedil;&otilde;es da OMS. No entanto, o Grupo B apresenta alguns outliers na parte superior, com o valor mais extremo atingindo 42,3. Esses casos representam participantes com obesidade grau II e mereceriam uma investiga&ccedil;&atilde;o mais aprofundada para entender se s&atilde;o erros de medi&ccedil;&atilde;o ou participantes com condi&ccedil;&otilde;es espec&iacute;ficas.</p></section><section class="detached"><h3 id="-512279951#rela-o-entre-passos-e-bmi" data-toc="rela-o-entre-passos-e-bmi#starter-topic.md-rela-o-entre-passos-e-bmi">Rela&ccedil;&atilde;o entre Passos e BMI</h3><div class="container"><figure class="image-container"><img class="center image image-size" id="-512279951#-fl7ist_25" alt="Steps vs BMI" title="Steps vs BMI" src="/home/mrpunkdasilva/WebstormProjects/data-science/assignments/assignment-1/Writerside/images/steps_vs_bmi_scatter.png" width="1000" height="600"><figcaption class="center-text">Steps vs BMI</figcaption></figure></div><p id="-512279951#-fl7ist_26">O gr&aacute;fico de dispers&atilde;o que cruza passos com BMI &eacute; talvez a visualiza&ccedil;&atilde;o mais reveladora. Nele, vejo que os pontos est&atilde;o bastante dispersos, sem formar um padr&atilde;o claro de correla&ccedil;&atilde;o. Participantes com poucos passos apresentam BMIs variados, assim como aqueles com muitos passos. Essa dispers&atilde;o indica que, pelo menos nestes dados, o n&uacute;mero de passos di&aacute;rios por si s&oacute; n&atilde;o parece ser um bom preditor do BMI.</p><p id="-512279951#-fl7ist_27">Chama aten&ccedil;&atilde;o que tanto no Grupo A quanto no Grupo B a nuvem de pontos tem uma forma bastante similar, refor&ccedil;ando a ideia de que os dois grupos s&atilde;o compar&aacute;veis em termos de comportamento e perfil.</p></section></section><section class="detached"><h2 id="-512279951#observa-es-adicionais" data-toc="observa-es-adicionais#starter-topic.md-observa-es-adicionais">Observa&ccedil;&otilde;es Adicionais</h2><p id="-512279951#-fl7ist_28">Alguns pontos que julguei relevantes destacar:</p><ul class="list" id="-512279951#-fl7ist_29" start="1"><li class="list-item" id="-512279951#-fl7ist_30"><p id="-512279951#-fl7ist_34">A m&eacute;dia de BMI de ambos os grupos est&aacute; ligeiramente acima de 25, o que classifica a maioria dos participantes como &quot;sobrepeso&quot;. Isso pode ser relevante para decis&otilde;es sobre programas de sa&uacute;de ou interven&ccedil;&otilde;es.</p></li><li class="list-item" id="-512279951#-fl7ist_31"><p id="-512279951#-fl7ist_35">A variabilidade nos passos &eacute; alta em ambos os grupos. Isso pode indicar que a popula&ccedil;&atilde;o &eacute; bastante heterog&ecirc;nea em termos de h&aacute;bitos de atividade f&iacute;sica, com desde pessoas bastante sedent&aacute;rias at&eacute; muito ativas.</p></li><li class="list-item" id="-512279951#-fl7ist_32"><p id="-512279951#-fl7ist_36">A presen&ccedil;a de outliers de BMI no Grupo B, especialmente o valor de 42,3, pode distorcer m&eacute;dias e outras medidas de tend&ecirc;ncia central caso n&atilde;o sejam tratados adequadamente em an&aacute;lises futuras.</p></li><li class="list-item" id="-512279951#-fl7ist_33"><p id="-512279951#-fl7ist_37">A aus&ecirc;ncia de correla&ccedil;&atilde;o vis&iacute;vel entre passos e BMI n&atilde;o significa necessariamente que n&atilde;o existe rela&ccedil;&atilde;o entre as vari&aacute;veis, pode ser que ela seja fraca, n&atilde;o linear, ou que outros fatores (como dieta, idade, condi&ccedil;&otilde;es de sa&uacute;de) tenham papel mais relevante.</p></li></ul></section><section class="detached"><h2 id="-512279951#conclus-o" data-toc="conclus-o#starter-topic.md-conclus-o">Conclus&atilde;o</h2><p id="-512279951#-fl7ist_38">De modo geral, a an&aacute;lise explorat&oacute;ria revelou que os dois grupos s&atilde;o bastante similares tanto em termos de atividade f&iacute;sica quanto de composi&ccedil;&atilde;o corporal. N&atilde;o h&aacute; diferen&ccedil;as marcantes que indiquem que um grupo &eacute; significativamente diferente do outro. Os dados apresentam variabilidade consider&aacute;vel, o que &eacute; esperado em uma popula&ccedil;&atilde;o diversa, e a rela&ccedil;&atilde;o entre passos e BMI n&atilde;o se mostrou forte o suficiente para drew conclus&otilde;es simplistas.</p><p id="-512279951#-fl7ist_39">Para uma an&aacute;lise mais aprofundada, seria recomend&aacute;vel aplicar testes estat&iacute;sticos formais (como o teste t de Student para comparar m&eacute;dias ou o teste de Kolmogorov-Smirnov para comparar distribui&ccedil;&otilde;es), al&eacute;m de considerar a inclus&atilde;o de outras vari&aacute;veis que possam explicar melhor o BMI dos participantes.</p></section></article></div></section><section class="topic"><div><article class="article"><h1 class="main-title" id="-379143904">Tarefa 2 - Sess&atilde;o Interativa de Pesquisa sobre Refer&ecirc;ncias de Artigos</h1><section class="detached"><h2 id="-379143904#introdu-o" data-toc="introdu-o#Tarefa-2.md-introdu-o">Introdu&ccedil;&atilde;o</h2><p id="-379143904#-mqmuxm_8">Nesta tarefa, realizei uma sess&atilde;o interativa de pesquisa na plataforma VALIS, conversando com o assistente Alan sobre dois artigos fundamentais na hist&oacute;ria do Aprendizado de M&aacute;quina: o artigo de McCulloch e Pitts (1943) e o artigo de Rosenblatt (1958). O objetivo foi compreender as contribui&ccedil;&otilde;es principais de cada artigo, identificar os conceitos fundamentais que eles introduziram, explorar por que estes modelos n&atilde;o foram suficientes para avan&ccedil;ar o ML mais adiante naquela &eacute;poca, e analisar quais insights ou capacidades importantes estavam faltando.</p><p id="-379143904#-mqmuxm_9">Link da conversa: https://ai.valis.jala.university/conversations/3380e96f-9b61-42fc-852e-201fc0314a4b</p></section><section class="detached"><h2 id="-379143904#artigo-1-mcculloch-e-pitts-1943" data-toc="artigo-1-mcculloch-e-pitts-1943#Tarefa-2.md-artigo-1-mcculloch-e-pitts-1943">Artigo 1: McCulloch e Pitts (1943)</h2><section class="detached"><h3 id="-379143904#contexto-e-motiva-o" data-toc="contexto-e-motiva-o#Tarefa-2.md-contexto-e-motiva-o">Contexto e Motiva&ccedil;&atilde;o</h3><p id="-379143904#-mqmuxm_16">Comecei a conversa perguntando sobre as principais contribui&ccedil;&otilde;es do artigo de McCulloch e Pitts de 1943. O Alan explicou que o artigo intitulado &quot;A Logical Calculus of the Ideas Immanent in Nervous Activity&quot; &eacute; considerado um dos textos mais fundamentais da hist&oacute;ria da computa&ccedil;&atilde;o e da intelig&ecirc;ncia artificial. McCulloch era neurofisiologista e Pitts era matem&aacute;tico, e a colabora&ccedil;&atilde;o entre os dois resultou em uma vis&atilde;o revolucion&aacute;ria sobre como o c&eacute;rebro poderia ser modelado matematicamente.</p></section><section class="detached"><h3 id="-379143904#principais-contribui-es-identificadas" data-toc="principais-contribui-es-identificadas#Tarefa-2.md-principais-contribui-es-identificadas">Principais Contribui&ccedil;&otilde;es Identificadas</h3><p id="-379143904#-mqmuxm_17">A primeira grande contribui&ccedil;&atilde;o foi o primeiro modelo matem&aacute;tico de um neur&ocirc;nio biol&oacute;gico. Eles demonstraram que um neur&ocirc;nio pode ser abstra&iacute;do como uma unidade l&oacute;gica que recebe entradas, realiza uma soma ponderada e produz uma sa&iacute;da bin&aacute;ria com base em uma fun&ccedil;&atilde;o de limiar. Essa abstra&ccedil;&atilde;o era elegante e poderosa porque capturava a ess&ecirc;ncia do funcionamento neural de forma que podia ser estudada formalmente.</p><p id="-379143904#-mqmuxm_18">A segunda contribui&ccedil;&atilde;o foi a conex&atilde;o entre neur&ocirc;nios e l&oacute;gica proposicional. Eles mostraram que neur&ocirc;nios interconectados podem implementar opera&ccedil;&otilde;es l&oacute;gicas fundamentais como AND, OR e NOT. Isso estabeleceu uma ponte direta entre biologia, l&oacute;gica matem&aacute;tica e computa&ccedil;&atilde;o, algo que n&atilde;o existia antes.</p><p id="-379143904#-mqmuxm_19">A terceira contribui&ccedil;&atilde;o foi a base para a teoria da computa&ccedil;&atilde;o. Construindo sobre as ideias de Alan Turing, McCulloch e Pitts demonstraram que redes de neur&ocirc;nios simples possuem enorme poder computacional, capazes de representar qualquer fun&ccedil;&atilde;o comput&aacute;vel. Isso foi fundamental para inspirar John von Neumann e Norbert Wiener no desenvolvimento de computadores e da cibern&eacute;tica.</p><p id="-379143904#-mqmuxm_20">A quarta contribui&ccedil;&atilde;o foi a funda&ccedil;&atilde;o das redes neurais artificiais. O neur&ocirc;nio de McCulloch-Pitts &eacute; considerado o ancestral direto dos neur&ocirc;nios artificiais modernos, inspirando o Perceptron de Rosenblatt e, posteriormente, as redes neurais profundas que usamos hoje.</p></section><section class="detached"><h3 id="-379143904#como-o-neur-nio-foi-modelado" data-toc="como-o-neur-nio-foi-modelado#Tarefa-2.md-como-o-neur-nio-foi-modelado">Como o Neur&ocirc;nio Foi Modelado</h3><p id="-379143904#-mqmuxm_21">Perguntei ao Alan como eles modelaram o neur&ocirc;nio artificial e qual era a base matem&aacute;tica utilizada. Ele explicou que o modelo era inspirado no neur&ocirc;nio biol&oacute;gico, onde os dendritos recebem sinais, o soma processa esses sinais e, se o sinal acumulado ultrapassar um limiar, o neur&ocirc;nio dispara.</p><p id="-379143904#-mqmuxm_22">A matem&aacute;tica era simples e elegante: primeiro somavam-se todas as entradas bin&aacute;rias recebidas, depois comparava-se essa soma com um limiar &theta;. Se a soma fosse maior ou igual ao limiar, a sa&iacute;da era 1 (o neur&ocirc;nio disparava). Caso contr&aacute;rio, a sa&iacute;da era 0. As entradas eram estritamente bin&aacute;rias e os pesos eram fixos, sendo o &uacute;nico par&acirc;metro ajust&aacute;vel o limiar &theta;.</p></section><section class="detached"><h3 id="-379143904#opera-es-l-gicas" data-toc="opera-es-l-gicas#Tarefa-2.md-opera-es-l-gicas">Opera&ccedil;&otilde;es L&oacute;gicas</h3><p id="-379143904#-mqmuxm_23">Continuei investigando como os neur&ocirc;nios de McCulloch-Pitts realizam opera&ccedil;&otilde;es l&oacute;gicas. O Alan mostrou que a mesma estrutura (soma ponderada + compara&ccedil;&atilde;o com limiar) realiza opera&ccedil;&otilde;es diferentes simplesmente mudando &theta; e os pesos.</p><p id="-379143904#-mqmuxm_24">Para a opera&ccedil;&atilde;o AND, os pesos s&atilde;o iguais a 1 para todas as entradas e o limiar &eacute; igual ao n&uacute;mero de entradas. Assim, o neur&ocirc;nio s&oacute; dispara se todas as entradas forem 1. Para a opera&ccedil;&atilde;o OR, os pesos s&atilde;o iguais a 1, mas o limiar &eacute; 1, ent&atilde;o qualquer entrada ativa o disparo. Para a opera&ccedil;&atilde;o NOT, utiliza-se um peso negativo (inibit&oacute;rio) que inverte a l&oacute;gica da entrada.</p><p id="-379143904#-mqmuxm_25">A grande sacada &eacute; que qualquer fun&ccedil;&atilde;o l&oacute;gica pode ser constru&iacute;da a partir de combina&ccedil;&otilde;es de AND, OR e NOT, o que significa que redes de neur&ocirc;nios MCP podem, em teoria, computar qualquer fun&ccedil;&atilde;o booleana.</p></section><section class="detached"><h3 id="-379143904#conex-o-com-aut-matos-finitos-e-m-quinas-de-turing" data-toc="conex-o-com-aut-matos-finitos-e-m-quinas-de-turing#Tarefa-2.md-conex-o-com-aut-matos-finitos-e-m-quinas-de-turing">Conex&atilde;o com Aut&ocirc;matos Finitos e M&aacute;quinas de Turing</h3><p id="-379143904#-mqmuxm_26">Perguntei como o artigo conecta redes neurais com a teoria de aut&ocirc;matos finitos e m&aacute;quinas de Turing. O Alan explicou que McCulloch e Pitts perceberam que redes desses neur&ocirc;nios se comportam como aut&ocirc;matos, sistemas que transitam entre estados em resposta a entradas. Marvin Minsky formalizou isso mais tarde com o teorema de que toda m&aacute;quina de estados finitos pode ser mapeada para uma rede neural equivalente.</p><p id="-379143904#-mqmuxm_27">A conex&atilde;o com m&aacute;quinas de Turing se d&aacute; quando consideramos redes recorrentes. Siegelmann e Sontag provaram em 1993 que redes neurais recorrentes anal&oacute;gicas s&atilde;o Turing-completas, ou seja, podem simular qualquer M&aacute;quina de Turing. A intui&ccedil;&atilde;o &eacute; que a ativa&ccedil;&atilde;o cont&iacute;nua dos neur&ocirc;nios pode codificar s&iacute;mbolos da fita nos d&iacute;gitos decimais de um n&uacute;mero real, simulando a mem&oacute;ria infinita da fita.</p></section><section class="detached"><h3 id="-379143904#limita-es-do-modelo" data-toc="limita-es-do-modelo#Tarefa-2.md-limita-es-do-modelo">Limita&ccedil;&otilde;es do Modelo</h3><p id="-379143904#-mqmuxm_28">Ao explorar as limita&ccedil;&otilde;es, identifiquei que o modelo de McCulloch e Pitts tinha s&eacute;rias restri&ccedil;&otilde;es que impediram o avan&ccedil;o do ML. A principal era a aus&ecirc;ncia total de aprendizado. O limiar &theta; era definido manualmente pelo modelador, e o neur&ocirc;nio n&atilde;o aprendia a partir de dados, n&atilde;o ajustava pesos, n&atilde;o melhorava com a experi&ecirc;ncia. Para uma &aacute;rea cuja ess&ecirc;ncia &eacute; aprender, isso era uma contradi&ccedil;&atilde;o fundamental.</p><p id="-379143904#-mqmuxm_29">Outra limita&ccedil;&atilde;o eram as entradas e sa&iacute;das estritamente bin&aacute;rias. O mundo real &eacute; cont&iacute;nuo, com temperaturas, pre&ccedil;os e probabilidades, mas o modelo s&oacute; aceitava valores 0 ou 1. Isso tornava imposs&iacute;vel representar problemas com vari&aacute;veis reais ou graduais.</p><p id="-379143904#-mqmuxm_30">O modelo tamb&eacute;m era limitado a problemas linearmente separ&aacute;veis, ou seja, onde as classes podiam ser separadas por uma linha reta. O exemplo cl&aacute;ssico que exp&ocirc;s isso foi o problema XOR, onde nenhuma linha reta consegue separar os resultados.</p><p id="-379143904#-mqmuxm_31">Al&eacute;m disso, os pesos eram fixos e todos os inputs excitat&oacute;rios tinham o mesmo peso, n&atilde;o havendo como expressar que uma entrada &eacute; mais relevante que outra. A inibi&ccedil;&atilde;o das entradas inibit&oacute;rias era absoluta, for&ccedil;ando a sa&iacute;da para 0 independentemente das outras entradas, e a estrutura da rede era est&aacute;tica, n&atilde;o mudando com o tempo.</p></section></section><section class="detached"><h2 id="-379143904#artigo-2-rosenblatt-1958" data-toc="artigo-2-rosenblatt-1958#Tarefa-2.md-artigo-2-rosenblatt-1958">Artigo 2: Rosenblatt (1958)</h2><section class="detached"><h3 id="-379143904#contexto-e-diferen-as-em-rela-o-a-mcculloch-e-pitts" data-toc="contexto-e-diferen-as-em-rela-o-a-mcculloch-e-pitts#Tarefa-2.md-contexto-e-diferen-as-em-rela-o-a-mcculloch-e-pitts">Contexto e Diferen&ccedil;as em Rela&ccedil;&atilde;o a McCulloch e Pitts</h3><p id="-379143904#-mqmuxm_37">Avancei para o artigo de Rosenblatt de 1958, perguntando sobre suas principais contribui&ccedil;&otilde;es e como ele difere do modelo anterior em termos de aprendizado. O Alan explicou que o artigo &quot;The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain&quot; foi publicado no Psychological Review, tornando as ideias acess&iacute;veis a um p&uacute;blico mais amplo.</p></section><section class="detached"><h3 id="-379143904#principais-contribui-es-do-perceptron" data-toc="principais-contribui-es-do-perceptron#Tarefa-2.md-principais-contribui-es-do-perceptron">Principais Contribui&ccedil;&otilde;es do Perceptron</h3><p id="-379143904#-mqmuxm_38">A primeira grande contribui&ccedil;&atilde;o foi um modelo probabil&iacute;stico de aprendizado. Rosenblatt n&atilde;o prop&ocirc;s apenas um neur&ocirc;nio artificial, mas sim um modelo de como o c&eacute;rebro pode armazenar e organizar informa&ccedil;&otilde;es, trazendo uma perspectiva probabil&iacute;stica que era inovadora para a &eacute;poca.</p><p id="-379143904#-mqmuxm_39">A segunda contribui&ccedil;&atilde;o foram os pesos num&eacute;ricos ajust&aacute;veis. Pela primeira vez, as conex&otilde;es entre neur&ocirc;nios passaram a ter pesos com valores num&eacute;ricos reais, e n&atilde;o apenas fixos. Isso significava que a import&acirc;ncia de cada entrada poderia variar, algo fundamental para o aprendizado.</p><p id="-379143904#-mqmuxm_40">A terceira contribui&ccedil;&atilde;o foi o algoritmo de aprendizado por corre&ccedil;&atilde;o de erros. Rosenblatt introduziu um mecanismo onde o modelo ajusta seus pesos automaticamente com base na diferen&ccedil;a entre o resultado esperado e o resultado obtido. Em ess&ecirc;ncia, quando o modelo erra, ele se ajusta para errar menos da pr&oacute;xima vez.</p><p id="-379143904#-mqmuxm_41">A quarta contribui&ccedil;&atilde;o foi a estrutura em camadas. Rosenblatt organizou o Perceptron em tr&ecirc;s tipos de unidades: S (Sensory) que percebe o ambiente, A (Association) que processa internamente e R (Response) que gera a resposta. Isso antecipou conceitualmente a ideia de redes neurais em camadas.</p></section><section class="detached"><h3 id="-379143904#separa-o-estat-stica" data-toc="separa-o-estat-stica#Tarefa-2.md-separa-o-estat-stica">Separa&ccedil;&atilde;o Estat&iacute;stica</h3><p id="-379143904#-mqmuxm_42">Perguntei o que &eacute; a &quot;separa&ccedil;&atilde;o estat&iacute;stica&quot; e como ela foi usada no Perceptron. O Alan explicou que Rosenblatt formalizou a ideia de que um conjunto de dados &eacute; linearmente separ&aacute;vel se existe um hiperplano que divide perfeitamente os exemplos de duas classes, sem que nenhum ponto fique do lado errado.</p><p id="-379143904#-mqmuxm_43">A palavra &quot;estat&iacute;stica&quot; vinha da vis&atilde;o probabil&iacute;stica de Rosenblatt. Para ele, o processo de aprendizado era probabil&iacute;stico, inspirado na biologia dos neur&ocirc;nios. A separa&ccedil;&atilde;o estat&iacute;stica era a fundamenta&ccedil;&atilde;o matem&aacute;tica que dizia que padr&otilde;es no mundo poderiam ser classificados com base em regularidades probabil&iacute;sticas, n&atilde;o em regras r&iacute;gidas.</p><p id="-379143904#-mqmuxm_44">A implica&ccedil;&atilde;o pr&aacute;tica era que se os dados s&atilde;o linearmente separ&aacute;veis, o Perceptron pode aprend&ecirc;-los. Se n&atilde;o s&atilde;o, como no XOR, o Perceptron falha por princ&iacute;pio. Essa limita&ccedil;&atilde;o ficou famosa na cr&iacute;tica de Minsky e Papert em 1969.</p></section><section class="detached"><h3 id="-379143904#algoritmo-de-aprendizado-e-garantias-te-ricas" data-toc="algoritmo-de-aprendizado-e-garantias-te-ricas#Tarefa-2.md-algoritmo-de-aprendizado-e-garantias-te-ricas">Algoritmo de Aprendizado e Garantias Te&oacute;ricas</h3><p id="-379143904#-mqmuxm_45">Explorei como funciona o algoritmo de aprendizado do Perceptron e suas garantias te&oacute;ricas. O Alan descreveu o processo como iterativo: apresenta-se um exemplo, calcula-se a sa&iacute;da atual, compara-se com o resultado esperado, e se houver erro, ajustam-se os pesos na dire&ccedil;&atilde;o que corrigiria o erro. &Eacute; um ciclo de tentativa, erro e corre&ccedil;&atilde;o.</p><p id="-379143904#-mqmuxm_46">A garantia te&oacute;rica mais poderosa era o Teorema de Converg&ecirc;ncia, que afirma que se os dados s&atilde;o linearmente separ&aacute;veis, o algoritmo &eacute; garantido de encontrar um hiperplano separador em um n&uacute;mero finito de atualiza&ccedil;&otilde;es. O n&uacute;mero m&aacute;ximo de erros antes da converg&ecirc;ncia &eacute; limitado por (R/&gamma;)&sup2;, onde R &eacute; o raio do conjunto de dados e &gamma; &eacute; a margem de separa&ccedil;&atilde;o.</p><p id="-379143904#-mqmuxm_47">Essa foi a primeira vez que um algoritmo de aprendizado tinha uma prova matem&aacute;tica rigorosa do seu comportamento. N&atilde;o era apenas emp&iacute;rico, era provado. No entanto, se os dados n&atilde;o forem linearmente separ&aacute;veis, o algoritmo cicla infinitamente, nunca convergindo.</p></section><section class="detached"><h3 id="-379143904#mem-ria-distribu-da" data-toc="mem-ria-distribu-da#Tarefa-2.md-mem-ria-distribu-da">Mem&oacute;ria Distribu&iacute;da</h3><p id="-379143904#-mqmuxm_48">A &uacute;ltima conceito que explorei foi a &quot;mem&oacute;ria distribu&iacute;da&quot; no contexto do Perceptron. O Alan explicou que Rosenblatt prop&ocirc;s que a mem&oacute;ria do Perceptron &eacute; distribu&iacute;da, no sentido de que qualquer associa&ccedil;&atilde;o pode fazer uso de uma grande propor&ccedil;&atilde;o das c&eacute;lulas no sistema. A remo&ccedil;&atilde;o de uma por&ccedil;&atilde;o do sistema de associa&ccedil;&atilde;o n&atilde;o teria um efeito apreci&aacute;vel no desempenho de uma discrimina&ccedil;&atilde;o ou associa&ccedil;&atilde;o espec&iacute;fica, mas come&ccedil;aria a aparecer como um d&eacute;ficit geral em todas as associa&ccedil;&otilde;es aprendidas.</p><p id="-379143904#-mqmuxm_49">Isso contrastava com a mem&oacute;ria localizada, onde cada mem&oacute;ria tem um endere&ccedil;o fixo. A analogia do holograma &eacute; perfeita: se voc&ecirc; rasga um holograma ao meio, n&atilde;o perde metade da imagem, mas v&ecirc; a imagem inteira com menos resolu&ccedil;&atilde;o. O dano &eacute; gradual e difuso, n&atilde;o catastr&oacute;fico.</p><p id="-379143904#-mqmuxm_50">Rosenblatt estava fortemente influenciado por estudos neurol&oacute;gicos de Karl Lashley, que observou que ratos com por&ccedil;&otilde;es do c&oacute;rtex cerebral removido n&atilde;o perdiam habilidades espec&iacute;ficas abruptamente, mas o desempenho degradava proporcionalmente &agrave; quantidade de c&oacute;rtex removido. Isso sugeriu que mem&oacute;rias n&atilde;o estavam armazenadas em locais espec&iacute;ficos, mas distribu&iacute;das.</p></section></section><section class="detached"><h2 id="-379143904#s-ntese-comparativa" data-toc="s-ntese-comparativa#Tarefa-2.md-s-ntese-comparativa">S&iacute;ntese Comparativa</h2><section class="detached"><h3 id="-379143904#insights-que-estavam-faltando" data-toc="insights-que-estavam-faltando#Tarefa-2.md-insights-que-estavam-faltando">Insights que Estavam Faltando</h3><p id="-379143904#-mqmuxm_54">Na parte final da conversa, perguntei ao Alan quais insights importantes estavam faltando para que o ML pudesse avan&ccedil;ar de verdade. Ele organizou a an&aacute;lise em duas partes.</p><p id="-379143904#-mqmuxm_55">Para McCulloch e Pitts, os insights ausentes inclu&iacute;am o fato de trabalharem apenas com entradas e sa&iacute;das bin&aacute;rias, quando o mundo real &eacute; cont&iacute;nuo. Os pesos fixos significavam que n&atilde;o havia ideia de que pesos poderiam emergir de dados. A aus&ecirc;ncia de aprendizado era uma contradi&ccedil;&atilde;o fundamental. N&atilde;o havia camadas intermedi&aacute;rias, apenas entrada direta para sa&iacute;da. A inibi&ccedil;&atilde;o absoluta era biologicamente simplista. O insight mais fundamental que faltava era ver o neur&ocirc;nio como um processador estat&iacute;stico que aprende representa&ccedil;&otilde;es do mundo, e n&atilde;o apenas como uma porta l&oacute;gica.</p><p id="-379143904#-mqmuxm_56">Para Rosenblatt, as limita&ccedil;&otilde;es inclu&iacute;am apenas uma camada de processamento, o que limitava a classifica&ccedil;&atilde;o a dados linearmente separ&aacute;veis. O problema do XOR provou que o modelo tinha um teto computacional muito baixo. A aus&ecirc;ncia de fun&ccedil;&atilde;o de ativa&ccedil;&atilde;o diferenci&aacute;vel tornava imposs&iacute;vel aplicar c&aacute;lculo de gradientes para treinar redes com m&uacute;ltiplas camadas. N&atilde;o havia algoritmo para redes profundas, embora Rosenblatt soubesse que m&uacute;ltiplas camadas resolveriam o problema. O insight mais fundamental que faltava era o mecanismo de propaga&ccedil;&atilde;o do erro para camadas internas.</p></section><section class="detached"><h3 id="-379143904#solu-es-desenvolvidas-nos-anos-1970-1980" data-toc="solu-es-desenvolvidas-nos-anos-1970-1980#Tarefa-2.md-solu-es-desenvolvidas-nos-anos-1970-1980">Solu&ccedil;&otilde;es Desenvolvidas nos Anos 1970-1980</h3><p id="-379143904#-mqmuxm_57">O Alan explicou que entre 1969 e 1986 foi uma das &eacute;pocas mais dram&aacute;ticas da ci&ecirc;ncia moderna. O livro &quot;Perceptrons&quot; de Minsky e Papert mergulhou o campo em um AI Winter, mas em paralelo, pesquisadores constru&iacute;am as pe&ccedil;as do quebra-cabe&ccedil;a.</p><p id="-379143904#-mqmuxm_58">A Regra de Hebb de 1949 prop&ocirc;s que neur&ocirc;nios que disparam juntos se ligam juntos, plantando a semente da ideia de que a for&ccedil;a de uma conex&atilde;o pode ser modificada com experi&ecirc;ncia. As fun&ccedil;&otilde;es de ativa&ccedil;&atilde;o cont&iacute;nuas e diferenci&aacute;veis, como a sigmoide, permitiram o c&aacute;lculo de gradientes, essencial para o aprendizado. O Backpropagation, descrito por Paul Werbos em 1974 e popularizado por Rumelhart, Hinton e Williams em 1986, demonstrou que o erro na sa&iacute;da pode ser propagado de volta pela rede, camada por camada, permitindo que pesos internos aprendessem.</p></section><section class="detached"><h3 id="-379143904#influ-ncia-nos-modelos-modernos" data-toc="influ-ncia-nos-modelos-modernos#Tarefa-2.md-influ-ncia-nos-modelos-modernos">Influ&ecirc;ncia nos Modelos Modernos</h3><p id="-379143904#-mqmuxm_59">Quando perguntei como esses dois artigos influenciaram o desenvolvimento das redes neurais modernas e do deep learning, o Alan organizou a resposta em termos de heran&ccedil;a estrutural.</p><p id="-379143904#-mqmuxm_60">De McCulloch e Pitts, herdamos o neur&ocirc;nio artificial como unidade base de qualquer rede neural moderna, a ideia de que cogni&ccedil;&atilde;o pode ser modelada matematicamente, e o pren&uacute;ncio da Universal Approximation Theorem, que mostra que redes podem computar qualquer fun&ccedil;&atilde;o l&oacute;gica.</p><p id="-379143904#-mqmuxm_61">De Rosenblatt, herdamos os pesos ajust&aacute;veis por dados, que &eacute; o cora&ccedil;&atilde;o de todo modelo de ML, o aprendizado por corre&ccedil;&atilde;o de erro como ess&ecirc;ncia do backpropagation, o paradigma de dados para aprendizado para generaliza&ccedil;&atilde;o, que define o Machine Learning como campo, e a ideia primitiva de gradiente descendente, base das variantes modernas como Adam e SGD.</p></section></section><section class="detached"><h2 id="-379143904#conclus-o" data-toc="conclus-o#Tarefa-2.md-conclus-o">Conclus&atilde;o</h2><p id="-379143904#-mqmuxm_62">Atrav&eacute;s dessa sess&atilde;o interativa com o Alan, desenvolvi uma compreens&atilde;o profunda de como esses dois artigos moldaram o campo do Machine Learning. Cada limita&ccedil;&atilde;o apontada se tornou um mapa para o pr&oacute;ximo avan&ccedil;o, e a hist&oacute;ria mostra que o Deep Learning moderno n&atilde;o nasceu de uma epifania &uacute;nica, mas &eacute; o produto acumulado de d&eacute;cadas de insights parciais. A conversa me ajudou a entender que a evolu&ccedil;&atilde;o tecnol&oacute;gica frequentemente acontece quando limita&ccedil;&otilde;es s&atilde;o identificadas e transformadas em oportunidades de pesquisa.</p></section></article></div></section></div></body></html>
