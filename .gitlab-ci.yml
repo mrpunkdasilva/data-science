@@ -11,8 +11,8 @@ vault-plain-code-compliance:
   before_script:
     - apk add --no-cache jq
   script:
-    - bash ./ci/scripts/check-plain-compliance.sh
-    - bash ./ci/scripts/check-ipynb-compliance.sh
+    - bash ./labs/ci/scripts/check-plain-compliance.sh
+    - bash ./labs/ci/scripts/check-ipynb-compliance.sh
   allow_failure: false
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
@@ -21,6 +21,7 @@ vault-plain-code-compliance:
 vault-python-code-compliance:
   stage: code-compliance
   image: python:3.12-slim
+  workdir: labs
   before_script:
     - python -m venv venv
     - source venv/bin/activate
@@ -38,6 +39,7 @@ vault-python-code-compliance:
 vault-check-outdated-dependencies:
   stage: code-compliance
   image: python:3.12-slim
+  workdir: labs
   before_script:
     - python -m venv venv
     - source venv/bin/activate
@@ -66,6 +68,7 @@ vault-check-outdated-dependencies:
 vault-documentation:
   stage: reports
   image: 123marvin123/typst:latest
+  workdir: labs
   script:
     - mkdir -p output-assets/documentation
     - export COMMIT_HASH=${CI_COMMIT_SHORT_SHA}
