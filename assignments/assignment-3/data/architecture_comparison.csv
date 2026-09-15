@@ -1,0 +1,8 @@
+Architecture,Hidden Layers,Activation,Parameters,Success Rate,Avg Epochs,Avg Final Loss
+Linear (baseline),None,none,3,0%,3001,0.250000
+1H Sigmoid,[1],sigmoid,5,0%,3001,0.178594
+1H ReLU,[1],relu,5,0%,3001,0.222222
+2H Sigmoid,[2],sigmoid,9,80%,1151,0.025045
+2H ReLU,[2],relu,9,20%,2507,0.177778
+2-1 Sigmoid,"[2, 1]",sigmoid,11,53%,1782,0.069330
+4H Sigmoid,[4],sigmoid,17,100%,467,0.000000
