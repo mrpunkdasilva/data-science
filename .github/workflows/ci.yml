@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: Install dependencies
+        run: |
+          cd labs
+          pip install -e .
+          
+      - name: Run linting
+        run: |
+          cd labs
+          python -m py_compile **/*.py
+          
+  test-notebooks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: Install dependencies
+        run: |
+          cd labs
+          pip install -e .
+          pip install jupyter nbconvert
+          
+      - name: Execute notebooks
+        run: |
+          cd labs/solutions
+          for nb in $(find . -name "*.ipynb" -type f); do
+            echo "Processing $nb..."
+            jupyter nbconvert --to notebook --execute "$nb" --output /dev/null
+          done
