@@ -1,0 +1,3 @@
+Classificador,Features por imagem,"Memória (treino+teste, MB)",Tempo de extração - treino (s),Tempo de extração - teste (s),Tempo de treinamento (s),Parâmetros do modelo
+A: Pixels brutos,50176,180.63,15.8,4.56,40.84,6431042
+B: VGG16,25088,90.32,218.64,125.39,21.86,3219778

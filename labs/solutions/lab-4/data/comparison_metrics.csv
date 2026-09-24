@@ -1,0 +1,3 @@
+Classificador,Acurácia final (teste),Pico de acurácia (teste),Tempo de treinamento (s),Épocas p/ convergência (95%)
+A: Pixels brutos (50.176),0.7766666666666666,0.84,40.843276023864746,4
+B: VGG16 (25.088),0.71,0.84,21.85581088066101,6

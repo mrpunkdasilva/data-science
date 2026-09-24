@@ -14,6 +14,7 @@ Repositório contendo labs, atividades (assignments) e capstone do curso CSDS-35
 | Lab 2.2 - Auto MPG Regression | [2.lab.2.auto-mpg-regression.ipynb](labs/solutions/lab-2/2.lab.2.auto-mpg-regression.ipynb) |
 | Lab 3.1 - Wisconsin Cancer Classification NN | [3.lab.1.wisconsin-cancer-classification-nn.ipynb](labs/solutions/lab-3/3.lab.1.wisconsin-cancer-classification-nn.ipynb) |
 | Lab 3.2 - Auto MPG Regression NN | [3.lab.2.auto-mpg-regression-nn.ipynb](labs/solutions/lab-3/3.lab.2.auto-mpg-regression-nn.ipynb) |
+| Lab 4 - Transfer Learning Hypothesis | [4.labtransfer-learning-hypothesis.ipynb](labs/solutions/lab-4/4.labtransfer-learning-hypothesis.ipynb) |
 
 ### Glimpses
 

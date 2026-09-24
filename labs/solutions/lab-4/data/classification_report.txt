@@ -1,0 +1,20 @@
+Classificador A (pixels brutos, 50.176 features)
+              precision    recall  f1-score   support
+
+      NORMAL       0.95      0.59      0.72       150
+   PNEUMONIA       0.70      0.97      0.81       150
+
+    accuracy                           0.78       300
+   macro avg       0.82      0.78      0.77       300
+weighted avg       0.82      0.78      0.77       300
+
+
+Classificador B (VGG16, 25.088 features)
+              precision    recall  f1-score   support
+
+      NORMAL       1.00      0.42      0.59       150
+   PNEUMONIA       0.63      1.00      0.78       150
+
+    accuracy                           0.71       300
+   macro avg       0.82      0.71      0.68       300
+weighted avg       0.82      0.71      0.68       300
