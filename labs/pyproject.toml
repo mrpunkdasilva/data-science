@@ -23,16 +23,12 @@ dependencies = [
   "seaborn==0.13.2"
 ]
 
-[project.scripts]
-csds-352-vault = "app.main:main"
+[tool.setuptools]
+py-modules = []
 
 [tool.mypy]
 python_version = "3.12"
 strict = true
 
 [tool.black]
-extend-exclude = '''
-/(
-    \.ipynb
-)/
-'''
+extend-exclude = '\.ipynb$'

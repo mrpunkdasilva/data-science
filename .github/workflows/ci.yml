@@ -7,42 +7,61 @@ on:
     branches: [ main ]
 
 jobs:
+  compliance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Check plain files compliance
+        run: bash ./ci/scripts/check-plain-compliance.sh
+
+      - name: Check notebooks compliance
+        run: bash ./ci/scripts/check-ipynb-compliance.sh
+
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          
+
       - name: Install dependencies
         run: |
-          cd labs
+          python -m pip install --upgrade pip setuptools
+          pip install -r requirements-dev.txt
           pip install -e .
-          
-      - name: Run linting
-        run: |
-          cd labs
-          python -m py_compile **/*.py
-          
+
+      - name: Run black
+        run: black --check .
+
+      - name: Run mypy
+        run: mypy .
+
+      - name: Compile all python files
+        run: find . -path ./.git -prune -o -path '*/venv' -prune -o -name '*.py' -print0 | xargs -0 python -m py_compile
+
   test-notebooks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          
+
       - name: Install dependencies
         run: |
-          cd labs
+          python -m pip install --upgrade pip setuptools
           pip install -e .
           pip install jupyter nbconvert
-          
+
       - name: Execute notebooks
         run: |
           cd labs/solutions

@@ -1,0 +1,31 @@
+# Dependencies allowed to be outdated, one per line, `#` starts a comment.
+# `*` matches any suffix.
+#
+# Transitive dependencies (nvidia-*, triton, ipython, mpmath, ...) are already
+# skipped by ci/scripts/check-outdated-dependencies.sh, since their versions
+# follow from the pins below. They are listed here only for reference.
+
+# Transitive dependencies of torch
+nvidia-*
+sympy
+triton
+mpmath
+ipython
+
+# Direct dependencies frozen at the versions validated for the course material.
+# Bump these in pyproject.toml / requirements-dev.txt once the labs and the
+# capstone are re-validated against the newer releases.
+black
+ipykernel
+ipympl
+matplotlib
+mypy
+numpy
+pandas
+pipdeptree
+pytest
+rich
+scikit-learn
+torch
+torchvision
+types-seaborn
