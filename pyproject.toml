@@ -11,11 +11,13 @@ license = {file = "LICENSE"}
 requires-python = ">=3.12"
 
 dependencies = [
+  "click==8.5.0",
   "ipykernel==6.29.5",
   "ipympl==0.9.6",
   "matplotlib==3.10.0",
   "numpy==2.2.3",
   "pandas==2.2.3",
+  "pypdf==6.19.0",
   "rich==13.9.4",
   "scikit-learn==1.6.1",
   "torch==2.6.0",
@@ -23,15 +25,21 @@ dependencies = [
   "seaborn==0.13.2"
 ]
 
+[project.optional-dependencies]
+embeddings = ["sentence-transformers==5.1.2"]
+ui = ["streamlit==1.52.0", "plotly==6.5.0"]
+umap = ["umap-learn==0.5.9.post2"]
+
 [project.scripts]
 csds-352-vault = "app.main:main"
+capstone = "api.cli:cli"
 
 [tool.setuptools]
 package-dir = { "" = "capstone/src" }
 
 [tool.setuptools.packages.find]
 where = ["capstone/src"]
-include = ["app*", "lib*"]
+include = ["api*", "app*", "cluster*", "embeddings*", "index*", "ingest*", "lib*", "pipeline*", "quality*", "ui*"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -41,6 +49,26 @@ files = ["capstone/src"]
 namespace_packages = true
 explicit_package_bases = true
 exclude = ['(^|/)(\.venv|venv|build|dist|node_modules|site-packages|__pycache__)/']
+
+[[tool.mypy.overrides]]
+module = [
+  "streamlit.*",
+  "plotly.*",
+  "pandas.*",
+  "umap.*",
+  "sklearn.*",
+  "joblib.*",
+  "sentence_transformers.*",
+  "transformers.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["tests.*", "scripts.*", "ui.*", "capstone.tests.*", "capstone.scripts.*"]
+disallow_untyped_defs = false
+disallow_untyped_decorators = false
+disallow_incomplete_defs = false
+warn_return_any = false
 
 [tool.black]
 extend-exclude = '\.ipynb$'

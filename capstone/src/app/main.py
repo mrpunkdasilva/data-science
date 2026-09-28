@@ -1,18 +1,23 @@
+"""Entry point of the CSDS-352 capstone: an interactive document knowledge base."""
+
 from textwrap import dedent
+
 from lib.console_manager import console_manager
 
-hello_world = dedent(
+HELLO_WORLD = dedent(
     """
     # Machine Learning Vault
-    
-    Welcome to your **machine learning** vault! This is a simple example to implement the
-    **entry point** for what will be the final implementation of your **Capstone Project**.
 
-    Please, consider the following instructions before making any changes:
+    Welcome to your **machine learning** vault! This is the capstone entry point.
 
-    - All files should be in compliance with **black** and **mypy**.
-    - There are **CI/CD** jobs already configured and passing. **Keep them green until the end**.
-    - The Jupyter Notebooks in the **notebooks** folder should be versioned **without output cells**.
+    The project is an interactive application to explore a corpus of scientific
+    papers using **embeddings** and **clusterization**. It covers the four
+    requirements of the brief:
+
+    - **Ingestion**: papers are fetched from the arXiv API as plain text or PDF
+    - **Knowledge base**: embeddings are stored in a local NumPy vector store
+    - **Exploration**: a Streamlit UI renders the cluster map and semantic search
+    - **Quality control**: quality scoring plus anomaly detection
 
     ## How to use black and mypy
 
@@ -37,7 +42,20 @@ hello_world = dedent(
 
     $ ./ci/scripts/check-plain-compliance.sh
     ...
-    All .typ, .txt, and .sh files are compliant!
+    All .typ, .txt, .sh, .md, and .yml files are compliant!
+
+    ```
+
+    ## How to run the capstone
+
+    ```bash
+
+    $ pip install -e .
+    $ capstone ingest --max-results 500
+    $ capstone build --backend tfidf
+    $ capstone cluster --n-clusters 8
+    $ capstone search "how do neural networks learn representations"
+    $ capstone serve
 
     ```
     """
@@ -45,7 +63,7 @@ hello_world = dedent(
 
 
 def main() -> None:
-    console_manager.print_markdown(hello_world)
+    console_manager.print_markdown(HELLO_WORLD)
 
 
 if __name__ == "__main__":
