@@ -1,3 +1,0 @@
-Exploiting answer-invariant redundancies in satellite imagery for efficient VLM inference on edge
-
-Onboard vision-language models could enable satellites to answer queries directly, but exhaustive tiled inference over high-resolution imagery is slow and energy-intensive. We identify answer-invariant token redundancy (AITR): image tiles and vision tokens that can be removed without changing the final answer. We present Rift, a two-stage system that performs query-conditioned tile pruning followed by elastic prefill to reduce token budget. We evaluate it on LLaVA-1.5 7B running on Jetson AGX Orin. Compared with exhaustive tiled inference, Rift reduces energy by 78% and latency by 69%, while increasing accuracy from 45% to 73%.

@@ -1,3 +1,0 @@
-A Nearly Quadratic Lower Bound for Linear Optimization over Convex Bodies in the Membership Oracle Model
-
-We prove nearly quadratic lower bounds for randomized algorithms for linear optimization and uniform sampling over convex bodies in the membership oracle model. For linear optimization, this matches the known nearly quadratic upper bound up to a polylog factor in the dimension. For uniform sampling, this improves on the previous linear lower bound. Our construction also implies the same lower bound for volume estimation.

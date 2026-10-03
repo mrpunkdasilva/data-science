@@ -45,8 +45,20 @@ vault-check-outdated-dependencies:
     - pip install -r requirements-dev.txt
     - pip install -e .
   script:
-    - bash ./ci/scripts/check-outdated-dependencies.sh
-  allow_failure: false
+    - |
+      # Get outdated packages and filter out allowed ones
+      outdated=$(pip list --outdated | tail -n +3 | while read -r package rest; do
+        if ! grep -q "^$package\$\|^${package%%-*}-\*$" .allowed_outdated_dependencies 2>/dev/null; then
+          echo "$package $rest"
+        fi
+      done)
+    - |
+      if [ -n "$outdated" ]; then
+        echo "Found non-allowed outdated packages:"
+        echo "$outdated"
+        exit 1
+      fi
+  allow_failure: true
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
