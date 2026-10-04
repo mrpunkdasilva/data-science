@@ -1,48 +1,80 @@
-# Data Science and Machine Learning Vault
+# Amazon Reviews Analysis Pipeline - Capstone Project
 
-The required *Python* version for this project is *3.12.x.*
+Sistema de análise de reviews Amazon usando embeddings, clusterização e controle de qualidade.
 
-## About me
-
-> Student should complete this section :)
-
-## Setup environment
-
-As usual setup your virtual environment:
+## Arquitetura
 
 ```
-$ python -m venv venv
-$ source venv/bin/activate
-$ pip install --upgrade pip setuptools
-$ pip install -r requirements-dev.txt
-$ pip install -e .
+Ingestão (HF Datasets) → Embeddings (paraphrase-multilingual-MiniLM-L12-v2)
+→ ChromaDB (HNSW, cosine) → UMAP + HDBSCAN → Quality Control (LogReg + IsolationForest)
+→ CLI Search/Analytics
 ```
 
-## Basic code compliance
+## Comandos CLI
 
+```bash
+# Pipeline completo
+capstone pipeline --limit 15000
+
+# Passos individuais
+capstone ingest --limit 15000
+capstone embed --batch-size 32
+capstone cluster
+capstone quality --contamination 0.05
+
+# Busca e análise
+capstone search "broken screen" --k 10 --category Electronics
+capstone clusters --top-terms 5
+capstone anomalies --limit 20
+capstone stats
 ```
-$ black .
-All done! ✨ 🍰 ✨
-X files left unchanged.
-$ mypy .
-Success: no issues found in X source files
+
+## Requisitos
+
+- Python 3.12+
+- 16GB+ RAM (CPU only)
+- 10GB+ disco livre
+
+## Instalação
+
+```bash
+pip install -e ".[dev]"
 ```
 
-## About the CI/CD pipeline
+## Qualidade de Código
 
-This `monorepo` comes with a pre-configured CI/CD pipeline that is triggered every time a push is made to a **merge request** or when a **merge request** is integrated into the **main** branch.
+```bash
+black .
+mypy .
+pytest tests/
+```
 
-The pipeline is configured to:
+## Modelo de Embedding
 
-- Execute **code compliance** checks.
-- Generate documentation.
+- **paraphrase-multilingual-MiniLM-L12-v2** (118M params, 384-dim, multilíngue)
+- Roda em CPU (~2k docs/s no i5-1235U)
 
-> You may add more stages or jobs to the pipeline, but make sure you **do not remove the existing ones**. In addition, make sure you do your best to **keep the pipeline green** at all times.
+## Dados
 
-## Information for students
+- Fonte: HuggingFace `McAuley-Lab/Amazon-Reviews-2023`
+- Categorias: Electronics, Home_and_Kitchen
+- Filtros: verified_purchase, text_len 50-500
 
-When importing your `monorepo` for the first time, please make sure you keep the name of the project as `csds-352-machine-learning-vault` (**all lowercase**) and execute the following checklist:
+## Labels Heurísticos (Quality Control)
 
-- [ ] Write the **About me** section. Include your name, your email, and feel free to add any other information you want to share. It would be awesome if you can add your expectations for this course.
-- [ ] The existing CI/CD pipeline is configured to generate a PDF slide deck intended to be used as a companion document for the course. Please, **update your name and email** in the `documentation/csds-352-vault.typ` file.
-- [ ] Remove this section from the README file once you have completed the above tasks.
+| Label | Regra |
+|-------|-------|
+| helpful | helpful_vote ≥ 10 AND rating ≥ 4 AND len > 100 |
+| funny | helpful_vote ≥ 5 AND keywords (funny, lol, 😂, haha) |
+| weird | rating ≤ 2 AND helpful_vote ≥ 5 AND keywords (weird, strange) |
+| fake_suspect | rating = 5 AND helpful_vote = 0 AND len < 80 AND marketing keywords |
+| normal | resto |
+
+## Clusterização
+
+- UMAP: n_neighbors=15, min_dist=0.1, metric=cosine
+- HDBSCAN: min_cluster_size=15, min_samples=5, metric=euclidean
+
+## Anomalia
+
+- IsolationForest: n_estimators=200, contamination=0.05

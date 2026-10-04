@@ -222,3 +222,10 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,linux,python
+
+# Capstone project
+capstone/chroma_db/
+capstone/models/
+capstone/data/
+capstone/*.pdf
+*.parquet

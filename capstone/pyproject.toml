@@ -3,29 +3,100 @@ requires = ["setuptools >= 69.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "csds-352-vault"
-version = "0.0.1"
-description = "Data Science and Machine Learning Vault"
-authors = [{name = "Jala R&D", email = "RD_GenerativeAI@jalasoft.com"}]
+name = "csds-352-capstone"
+version = "0.1.0"
+description = "Amazon Reviews Analysis Pipeline - Capstone Project"
+authors = [{name = "Student", email = "student@example.com"}]
 license = {file = "LICENSE"}
+readme = "README.md"
 requires-python = ">=3.12"
-
 dependencies = [
-  "ipykernel==6.29.5",
-  "ipympl==0.9.6",
-  "matplotlib==3.10.0",
-  "numpy==2.2.3",
-  "pandas==2.2.3",
-  "rich==13.9.4",
-  "scikit-learn==1.6.1",
-  "torch==2.6.0",
-  "torchvision==0.21.0",
-  "seaborn==0.13.2"
+    "click==8.5.0",
+    "ipykernel==6.29.5",
+    "ipympl==0.9.6",
+    "matplotlib==3.10.0",
+    "numpy>=1.24,<2.0",
+    "pandas==2.2.3",
+    "pypdf==6.19.0",
+    "rich==13.9.4",
+    "scikit-learn==1.6.1",
+    "torch==2.14.0",
+    "torchvision==0.29.0",
+    "seaborn==0.13.2",
+    "sentence-transformers==5.1.2",
+    "chromadb==0.5.5",
+    "hdbscan==0.8.39",
+    "umap-learn==0.5.9.post2",
+    "datasets==2.19.0",
+    "fastapi==0.115.0",
+    "uvicorn==0.30.0",
+    "typer==0.12.5",
+    "pydantic-settings==2.5.0",
+    "pydantic==2.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black[jupyter]==25.1.0",
+    "mypy==1.15.0",
+    "pipdeptree==2.25.0",
+    "pytest==8.3.4",
+    "types-seaborn==0.13.2.20250111",
 ]
 
 [project.scripts]
-csds-352-vault = "app.main:main"
+capstone = "cli.main:app"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["cli*", "ingest*", "embed*", "store*", "cluster*", "quality*", "search*", "config*"]
 
 [tool.mypy]
 python_version = "3.12"
 strict = true
+mypy_path = "src"
+files = ["src"]
+namespace_packages = true
+explicit_package_bases = true
+exclude = ['(^|/)(\.venv|venv|build|dist|node_modules|site-packages|__pycache__)/']
+
+[[tool.mypy.overrides]]
+module = [
+    "streamlit.*",
+    "plotly.*",
+    "pandas.*",
+    "umap.*",
+    "sklearn.*",
+    "joblib.*",
+    "sentence_transformers.*",
+    "transformers.*",
+    "chromadb.*",
+    "hdbscan.*",
+    "datasets.*",
+    "typer.*",
+    "pydantic.*",
+    "pydantic_settings.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["tests.*", "scripts.*"]
+disallow_untyped_defs = false
+disallow_untyped_decorators = false
+disallow_incomplete_defs = false
+warn_return_any = false
+
+[tool.black]
+extend-exclude = '\.ipynb$'
+line-length = 100
+target-version = ['py312']
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
