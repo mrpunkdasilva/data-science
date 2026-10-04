@@ -66,6 +66,8 @@ module = [
   "typer.*",
   "pydantic.*",
   "pydantic_settings.*",
+  "altair.*",
+  "altair.vegalite.*",
 ]
 ignore_missing_imports = true
 
