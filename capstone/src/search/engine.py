@@ -107,7 +107,12 @@ def list_clusters(
     for meta, doc in zip(metadatas, documents):
         cid = int(meta.get("cluster_id", -1))
         if cid not in clusters:
-            clusters[cid] = {"reviews": [], "ratings": [], "helpful": [], "qualities": []}
+            clusters[cid] = {
+                "reviews": [],
+                "ratings": [],
+                "helpful": [],
+                "qualities": [],
+            }
         clusters[cid]["reviews"].append(doc)
         clusters[cid]["ratings"].append(meta.get("rating", 0))
         clusters[cid]["helpful"].append(meta.get("helpful_vote", 0))

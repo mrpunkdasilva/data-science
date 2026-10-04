@@ -89,7 +89,9 @@ def run_clustering(
 
     n_clusters = len(set(cluster_labels)) - (1 if -1 in cluster_labels else 0)
     noise_count = sum(1 for l in cluster_labels if l == -1)
-    console_log(f"Clustering complete: {n_clusters} clusters, {noise_count} noise points")
+    console_log(
+        f"Clustering complete: {n_clusters} clusters, {noise_count} noise points"
+    )
 
 
 def console_log(msg: str) -> None:

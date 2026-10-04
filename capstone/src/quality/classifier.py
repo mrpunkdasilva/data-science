@@ -33,7 +33,9 @@ def run_quality_classification(collection_name: str) -> None:
     # Extract heuristic labels
     y_heuristic = [m.get("quality_label", "normal") for m in metadatas]
     unique_labels = set(y_heuristic)
-    console_log(f"Heuristic label distribution: {pd.Series(y_heuristic).value_counts().to_dict()}")
+    console_log(
+        f"Heuristic label distribution: {pd.Series(y_heuristic).value_counts().to_dict()}"
+    )
 
     # Need at least 2 classes
     if len(unique_labels) < 2:

@@ -7,7 +7,10 @@ from config import settings
 
 def test_config_loads():
     """Test that settings load correctly."""
-    assert settings.EMBEDDING_MODEL == "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    assert (
+        settings.EMBEDDING_MODEL
+        == "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    )
     assert settings.EMBEDDING_DIM == 384
     assert settings.COLLECTION_NAME == "amazon_reviews"
     assert settings.TARGET_SAMPLES == 15000

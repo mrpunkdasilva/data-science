@@ -38,7 +38,11 @@ def load_reviews(
     for cat in categories:
         console_log(f"Loading {cat} (target: {per_category})...")
         ds = load_dataset(
-            settings.HF_DATASET, cat, split="full", streaming=True, trust_remote_code=True
+            settings.HF_DATASET,
+            cat,
+            split="full",
+            streaming=True,
+            trust_remote_code=True,
         )
 
         rows = []
@@ -90,7 +94,9 @@ def _heuristic_quality_label(row: pd.Series) -> str:
 
     if helpful >= 10 and rating >= 4 and text_len > 100:
         return "helpful"
-    if helpful >= 5 and any(kw in text for kw in ["funny", "lol", "😂", "haha", "hilarious"]):
+    if helpful >= 5 and any(
+        kw in text for kw in ["funny", "lol", "😂", "haha", "hilarious"]
+    ):
         return "funny"
     if (
         rating <= 2
@@ -104,7 +110,13 @@ def _heuristic_quality_label(row: pd.Series) -> str:
         and text_len < 80
         and any(
             kw in text
-            for kw in ["best ever", "perfect", "amazing product", "highly recommend", "five stars"]
+            for kw in [
+                "best ever",
+                "perfect",
+                "amazing product",
+                "highly recommend",
+                "five stars",
+            ]
         )
     ):
         return "fake_suspect"

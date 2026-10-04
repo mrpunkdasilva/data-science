@@ -30,11 +30,16 @@ def cli() -> None:
 )
 @click.option("--limit", "-l", default=15000, help="Total reviews to load")
 @click.option(
-    "--output", "-o", default="data/processed/reviews.parquet", help="Output parquet path"
+    "--output",
+    "-o",
+    default="data/processed/reviews.parquet",
+    help="Output parquet path",
 )
 @click.option("--min-len", default=50, help="Minimum review text length")
 @click.option("--max-len", default=500, help="Maximum review text length")
-@click.option("--verified-only/--no-verified-only", default=True, help="Only verified purchases")
+@click.option(
+    "--verified-only/--no-verified-only", default=True, help="Only verified purchases"
+)
 def ingest(
     categories: str,
     limit: int,
@@ -61,7 +66,9 @@ def ingest(
 
 
 @cli.command()
-@click.option("--input", "-i", default="data/processed/reviews.parquet", help="Input parquet path")
+@click.option(
+    "--input", "-i", default="data/processed/reviews.parquet", help="Input parquet path"
+)
 @click.option("--collection", default="amazon_reviews", help="ChromaDB collection name")
 @click.option("--batch-size", "-b", default=32, help="Embedding batch size")
 @click.option("--device", default="cpu", help="Device: cpu or cuda")
@@ -72,7 +79,9 @@ def embed(
     device: str,
 ) -> None:
     """Generate embeddings and store in ChromaDB."""
-    console.print(f"[bold green]Embedding reviews from {input} into {collection}...[/bold green]")
+    console.print(
+        f"[bold green]Embedding reviews from {input} into {collection}...[/bold green]"
+    )
     embed_reviews(
         input_path=input,
         collection_name=collection,
@@ -115,7 +124,9 @@ def quality(
     contamination: float,
 ) -> None:
     """Run quality classification and anomaly detection."""
-    console.print(f"[bold green]Running quality control on {collection}...[/bold green]")
+    console.print(
+        f"[bold green]Running quality control on {collection}...[/bold green]"
+    )
     run_quality_classification(collection_name=collection)
     run_anomaly_detection(collection_name=collection, contamination=contamination)
     console.print("[bold green]Quality control complete![/bold green]")
@@ -175,7 +186,9 @@ def clusters(
         console.print(
             f"\n[bold magenta]Cluster {c['cluster_id']}[/bold magenta] ({c['size']} reviews)"
         )
-        console.print(f"  Avg Rating: {c['avg_rating']:.2f} | Avg Helpful: {c['avg_helpful']:.1f}")
+        console.print(
+            f"  Avg Rating: {c['avg_rating']:.2f} | Avg Helpful: {c['avg_helpful']:.1f}"
+        )
         console.print(f"  Dominant Quality: {c['dominant_quality']}")
         console.print(f"  Top Terms: {', '.join(c['top_terms'])}")
 
@@ -190,9 +203,13 @@ def anomalies(
     min_score: float,
 ) -> None:
     """Show top anomalous reviews."""
-    results = get_anomalies(collection_name=collection, limit=limit, min_score=min_score)
+    results = get_anomalies(
+        collection_name=collection, limit=limit, min_score=min_score
+    )
     for i, r in enumerate(results, 1):
-        console.print(f"\n[bold red]{i}.[/bold red] Anomaly Score: {r['anomaly_score']:.3f}")
+        console.print(
+            f"\n[bold red]{i}.[/bold red] Anomaly Score: {r['anomaly_score']:.3f}"
+        )
         console.print(f"  Title: {r['title']}")
         console.print(
             f"  Category: {r['category']} | Rating: {r['rating']} | Quality: {r['quality_label']}"
@@ -210,11 +227,15 @@ def stats(
     console.print(f"\n[bold]Collection:[/bold] {stats['collection']}")
     console.print(f"[bold]Total Reviews:[/bold] {stats['total_reviews']}")
     console.print(f"[bold]Categories:[/bold] {stats['categories']}")
-    console.print(f"[bold]Clusters:[/bold] {stats['n_clusters']} (noise: {stats['noise_count']})")
+    console.print(
+        f"[bold]Clusters:[/bold] {stats['n_clusters']} (noise: {stats['noise_count']})"
+    )
     console.print(f"[bold]Quality Distribution:[/bold]")
     for label, count in stats["quality_distribution"].items():
         console.print(f"  {label}: {count}")
-    console.print(f"[bold]Anomalies:[/bold] {stats['anomaly_count']} ({stats['anomaly_pct']:.1f}%)")
+    console.print(
+        f"[bold]Anomalies:[/bold] {stats['anomaly_count']} ({stats['anomaly_pct']:.1f}%)"
+    )
 
 
 @cli.command()

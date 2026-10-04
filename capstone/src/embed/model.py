@@ -19,7 +19,9 @@ def get_model(device: str | None = None) -> SentenceTransformer:
 
 
 def embed_texts(
-    texts: list[str], model: SentenceTransformer | None = None, batch_size: int | None = None
+    texts: list[str],
+    model: SentenceTransformer | None = None,
+    batch_size: int | None = None,
 ) -> list[list[float]]:
     """
     Generate embeddings for a list of texts.

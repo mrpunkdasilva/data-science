@@ -54,7 +54,9 @@ def run_anomaly_detection(
     collection.update(ids=ids, metadatas=metadatas)  # type: ignore[arg-type]
 
     n_anomalies = sum(1 for s in scores if s > 0.7)  # threshold for "high" anomaly
-    console_log(f"Anomaly detection complete: {n_anomalies} high-anomaly reviews (score > 0.7)")
+    console_log(
+        f"Anomaly detection complete: {n_anomalies} high-anomaly reviews (score > 0.7)"
+    )
 
 
 def console_log(msg: str) -> None:

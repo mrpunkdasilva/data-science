@@ -17,7 +17,9 @@ def get_chroma_client() -> chromadb.PersistentClient:
     return client
 
 
-def get_or_create_collection(client: chromadb.PersistentClient, name: str) -> Collection:
+def get_or_create_collection(
+    client: chromadb.PersistentClient, name: str
+) -> Collection:
     """Get existing collection or create new one with HNSW config."""
     try:
         collection = client.get_collection(name)
