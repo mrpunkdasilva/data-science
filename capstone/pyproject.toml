@@ -78,6 +78,7 @@ module = [
     "datasets.*",
     "typer.*",
     "pydantic.*",
+    "pydantic_settings",
     "pydantic_settings.*",
 ]
 ignore_missing_imports = true

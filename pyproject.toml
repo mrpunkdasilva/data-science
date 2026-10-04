@@ -65,6 +65,7 @@ module = [
   "datasets.*",
   "typer.*",
   "pydantic.*",
+  "pydantic_settings",
   "pydantic_settings.*",
   "altair.*",
   "altair.vegalite.*",
