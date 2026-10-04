@@ -60,6 +60,12 @@ module = [
   "joblib.*",
   "sentence_transformers.*",
   "transformers.*",
+  "chromadb.*",
+  "hdbscan.*",
+  "datasets.*",
+  "typer.*",
+  "pydantic.*",
+  "pydantic_settings.*",
 ]
 ignore_missing_imports = true
 
