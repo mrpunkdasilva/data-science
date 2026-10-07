@@ -104,6 +104,7 @@ capstone-pipeline:
       pip install
       "numpy==1.26.4"
       "chromadb==0.5.5"
+      "posthog>=2,<3"
       "datasets==2.19.0"
       "hdbscan==0.8.39"
       "sentence-transformers==5.1.2"

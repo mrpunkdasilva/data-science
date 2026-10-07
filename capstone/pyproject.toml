@@ -25,6 +25,7 @@ dependencies = [
     "seaborn==0.13.2",
     "sentence-transformers==5.1.2",
     "chromadb==0.5.5",
+    "posthog>=2,<3",
     "hdbscan==0.8.39",
     "umap-learn==0.5.9.post2",
     "datasets==2.19.0",
