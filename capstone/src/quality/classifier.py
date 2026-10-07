@@ -94,7 +94,7 @@ def run_quality_classification(collection_name: str) -> None:
         settings.MODELS_DIR / "quality_classifier.joblib",
     )
 
-    # Update ChromaDB
+    # Update ChromaDB in batches
     console_log("Updating ChromaDB with predicted quality labels...")
     new_metadatas = []
     for m, pred in zip(metadatas, y_all_pred):
@@ -102,7 +102,13 @@ def run_quality_classification(collection_name: str) -> None:
         m["quality_label"] = pred
         new_metadatas.append(m)
 
-    collection.update(ids=ids, metadatas=new_metadatas)  # type: ignore[arg-type]
+    update_batch_size = 5000  # ChromaDB max batch size is 5461
+    for offset in range(0, len(ids), update_batch_size):
+        end = min(offset + update_batch_size, len(ids))
+        collection.update(ids=ids[offset:end], metadatas=new_metadatas[offset:end])  # type: ignore[arg-type]
+        console_log(
+            f"  Updated batch {offset//update_batch_size + 1}/{(len(ids)-1)//update_batch_size + 1}"
+        )
     console_log("Quality classification complete!")
 
 

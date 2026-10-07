@@ -73,7 +73,7 @@ def run_clustering(
     )
     cluster_labels = clusterer.fit_predict(umap_embeddings)
 
-    # Update ChromaDB with cluster info
+    # Update ChromaDB with cluster info in batches
     console_log("Updating ChromaDB with cluster labels and UMAP coordinates...")
     metadatas: list[dict[str, float | int]] = []
     for i, (uid, label) in enumerate(zip(all_ids, cluster_labels)):
@@ -85,7 +85,13 @@ def run_clustering(
             }
         )
 
-    collection.update(ids=all_ids, metadatas=metadatas)  # type: ignore[arg-type]
+    update_batch_size = 5000  # ChromaDB max batch size is 5461
+    for offset in range(0, len(all_ids), update_batch_size):
+        end = min(offset + update_batch_size, len(all_ids))
+        collection.update(ids=all_ids[offset:end], metadatas=metadatas[offset:end])  # type: ignore[arg-type]
+        console_log(
+            f"  Updated batch {offset//update_batch_size + 1}/{(len(all_ids)-1)//update_batch_size + 1}"
+        )
 
     n_clusters = len(set(cluster_labels)) - (1 if -1 in cluster_labels else 0)
     noise_count = sum(1 for l in cluster_labels if l == -1)

@@ -48,10 +48,17 @@ def run_anomaly_detection(
     settings.MODELS_DIR.mkdir(parents=True, exist_ok=True)
     joblib.dump(iso_forest, settings.MODELS_DIR / "anomaly_detector.joblib")
 
-    # Update ChromaDB
+    # Update ChromaDB in batches
     console_log("Updating ChromaDB with anomaly scores...")
     metadatas = [{"anomaly_score": float(s)} for s in scores]
-    collection.update(ids=ids, metadatas=metadatas)  # type: ignore[arg-type]
+
+    update_batch_size = 5000  # ChromaDB max batch size is 5461
+    for offset in range(0, len(ids), update_batch_size):
+        end = min(offset + update_batch_size, len(ids))
+        collection.update(ids=ids[offset:end], metadatas=metadatas[offset:end])  # type: ignore[arg-type]
+        console_log(
+            f"  Updated batch {offset//update_batch_size + 1}/{(len(ids)-1)//update_batch_size + 1}"
+        )
 
     n_anomalies = sum(1 for s in scores if s > 0.7)  # threshold for "high" anomaly
     console_log(
