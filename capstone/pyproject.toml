@@ -45,7 +45,7 @@ dev = [
 ]
 
 [project.scripts]
-capstone = "cli.main:app"
+capstone = "cli.main:cli"
 
 [tool.setuptools]
 package-dir = { "" = "src" }
