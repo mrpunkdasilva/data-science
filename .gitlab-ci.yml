@@ -81,3 +81,41 @@ vault-documentation:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+
+capstone-pipeline:
+  stage: test
+  image: python:3.12-slim
+  variables:
+    HF_HOME: $CI_PROJECT_DIR/.hf-cache
+  cache:
+    key:
+      files:
+        - capstone/pyproject.toml
+    paths:
+      - .hf-cache
+  before_script:
+    - python -m venv venv
+    - source venv/bin/activate
+    - pip install --upgrade pip setuptools
+    - pip install -r requirements-dev.txt
+    - pip install -e .
+    - pip install --no-deps -e ./capstone
+    - >-
+      pip install
+      "numpy==1.26.4"
+      "chromadb==0.5.5"
+      "datasets==2.19.0"
+      "hdbscan==0.8.39"
+      "sentence-transformers==5.1.2"
+      "umap-learn==0.5.9.post2"
+      "pydantic==2.9.0"
+      "pydantic-settings==2.5.0"
+  script:
+    - pytest capstone/tests/ -v --tb=short
+    - python -m cli.main pipeline --limit 100
+    - python -m cli.main stats
+    - python -m cli.main search "broken" --k 3
+  allow_failure: false
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
