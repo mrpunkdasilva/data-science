@@ -29,7 +29,7 @@ exposes the whole corpus through semantic search and analytics commands.
 - **Domain:** Brazilian labor law (*Direito do Trabalho*), specifically the
   jurisprudence of the **Tribunal Superior do Trabalho (TST)**.
 - **Corpus:** the official *Livro de Súmulas, Orientações Jurisprudenciais e
-  Precedentes Normativos* — [official source](https://www.tst.jus.br/livro-de-sumulas-ojs-e-pns).
+  Precedentes Normativos* ([official source](https://www.tst.jus.br/livro-de-sumulas-ojs-e-pns)).
 - **Entity modeled:** a **verbete**, i.e. a single numbered normative statement,
   carrying a type (`sumula`, `oj`, `precedente`), an issuing body (`orgao`), a
   code (`codigo`) and a theme (`tema`).
@@ -60,7 +60,7 @@ A detailed component diagram is available as PlantUML source below:
 
 ```plantuml
 @startuml
-title TST Jurisprudence Analysis Pipeline — Architecture
+title TST Jurisprudence Analysis Pipeline - Architecture
 left to right direction
 skinparam shadowing false
 skinparam componentStyle rectangle
@@ -73,7 +73,7 @@ database "Parquet" as parquet
 database "ChromaDB\n(HNSW · cosine)" as chroma
 file "JSONL" as jsonl
 
-rectangle "CLI — cli.main" {
+rectangle "CLI - cli.main" {
   [ingest] as ingest
   [embed] as embed
   [cluster] as cluster
