@@ -1,62 +1,63 @@
 # TST Jurisprudence Analysis Pipeline - Capstone Project
 
-Pipeline de análise do **Livro de Jurisprudência do TST** (Súmulas, Orientações
-Jurisprudenciais e Precedentes Normativos) usando embeddings multilíngues,
-clusterização, busca semântica e controle de qualidade.
+Pipeline for analyzing the **TST Jurisprudence Book** (Precedents, Jurisprudential
+Guidelines and Normative Precedents) using multilingual embeddings, clustering,
+semantic search and quality control.
 
-## Arquitetura
+## Architecture
 
 ```
-Ingestão (PDF → verbetes) → Embeddings (paraphrase-multilingual-MiniLM-L12-v2)
+Ingestion (PDF → verbetes) → Embeddings (paraphrase-multilingual-MiniLM-L12-v2)
 → ChromaDB (HNSW, cosine) → UMAP + HDBSCAN → Quality Control (LogReg + IsolationForest)
-→ Export JSONL + CLI Search/Analytics
+→ JSONL Export + CLI Search/Analytics
 ```
 
-Cada verbete é segmentado do PDF mantendo apenas a redação vigente (o livro
-também reproduz o histórico completo de cada verbete), com corte em
-`Histórico:`/repetições de cabeçalho e parada no `Índice Remissivo`.
+Each verbete is segmented from the PDF keeping only the current wording (the book
+also reproduces the full history of each verbete), cutting at
+`Histórico:`/repeated headers and stopping at the `Índice Remissivo` (Subject
+Index).
 
-## Requisitos
+## Requirements
 
 - Python 3.12+
 - 16GB+ RAM (CPU only)
-- 10GB+ disco livre
+- 10GB+ free disk
 
-## Instalação
+## Installation
 
 ```bash
 pip install -e ".[dev]"
 ```
 
-## Dados
+## Data
 
-- Fonte oficial: [Livro de Súmulas, OJs e PNs](https://www.tst.jus.br/livro-de-sumulas-ojs-e-pns)
-- Arquivo: `data/raw/livrointernet12pdf.pdf` (579 páginas, não versionado)
-- Corpus extraído: ~1058 verbetes (~703 OJs, 235 Súmulas, 120 Precedentes Normativos)
+- Official source: [Book of Precedents, OJs and PNs](https://www.tst.jus.br/livro-de-sumulas-ojs-e-pns)
+- File: `data/raw/livrointernet12pdf.pdf` (579 pages, not versioned)
+- Extracted corpus: ~1058 verbetes (~703 OJs, 235 Precedents, 120 Normative Precedents)
 
-## Comandos CLI
+## CLI Commands
 
 ```bash
-# Pipeline completo (ingest -> embed -> cluster -> quality -> export)
+# Full pipeline (ingest -> embed -> cluster -> quality -> export)
 capstone pipeline -i data/raw/livrointernet12pdf.pdf
 
-# Passos individuais
+# Individual steps
 capstone ingest -i data/raw/livrointernet12pdf.pdf -o data/processed/tst.parquet
 capstone embed --batch-size 32 --id-prefix verbete
 capstone cluster
 capstone quality --contamination 0.05
 capstone export -o data/final/tst.jsonl
 
-# Busca e análise
+# Search and analytics
 capstone search "adicional de insalubridade" --k 10 --tipo oj --orgao SBDI-1
 capstone clusters --top-terms 5
 capstone anomalies --limit 20
 capstone stats
 ```
 
-## Export JSONL
+## JSONL Export
 
-Cada linha de `data/final/tst.jsonl` é um verbete enriquecido:
+Each line of `data/final/tst.jsonl` is an enriched verbete:
 
 ```json
 {
@@ -77,30 +78,30 @@ Cada linha de `data/final/tst.jsonl` é um verbete enriquecido:
 }
 ```
 
-## Labels Heurísticos (Quality Control)
+## Heuristic Labels (Quality Control)
 
-| Label | Regra |
-|-------|-------|
-| cancelado | cabeçalho indica `cancelad`, `(negativo)`, `revogad`, `cassad`, `superad` |
-| duplicado | corpo normalizado repetido em mais de um verbete |
-| ruido | texto com menos de 30 caracteres |
-| curto | texto entre 30 e 119 caracteres |
-| completo | texto com 120+ caracteres |
+| Label | Rule |
+|-------|------|
+| cancelado (cancelled) | header indicates `cancelad`, `(negativo)`, `revogad`, `cassad`, `superad` |
+| duplicado (duplicate) | normalized body repeated across more than one verbete |
+| ruido (noise) | text shorter than 30 characters |
+| curto (short) | text between 30 and 119 characters |
+| completo (complete) | text with 120+ characters |
 
-## Modelo de Embedding
+## Embedding Model
 
-- **paraphrase-multilingual-MiniLM-L12-v2** (118M params, 384-dim, multilíngue)
+- **paraphrase-multilingual-MiniLM-L12-v2** (118M params, 384-dim, multilingual)
 
-## Clusterização
+## Clustering
 
 - UMAP: n_neighbors=15, min_dist=0.1, metric=cosine
 - HDBSCAN: min_cluster_size=15, min_samples=5, metric=euclidean
 
-## Anomalia
+## Anomaly
 
 - IsolationForest: n_estimators=200, contamination=0.05
 
-## Qualidade de Código
+## Code Quality
 
 ```bash
 black .
