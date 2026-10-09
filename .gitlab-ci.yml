@@ -103,6 +103,7 @@ capstone-pipeline:
     - >-
       pip install
       "numpy==1.26.4"
+      "pyarrow==17.0.0"
       "pypdf==6.19.0"
       "pdfplumber==0.11.10"
       "chromadb==0.5.5"
