@@ -56,6 +56,14 @@ Ingestion (PDF → verbetes) → Embeddings (paraphrase-multilingual-MiniLM-L12-
 → JSONL Export + CLI Search/Analytics
 ```
 
+A detailed component diagram is available as PlantUML source in
+[`documentation/diagrams/architecture.puml`](documentation/diagrams/architecture.puml).
+Render it with:
+
+```bash
+plantuml -tsvg documentation/diagrams/architecture.puml
+```
+
 Each verbete is segmented from the PDF keeping only the current wording (the book
 also reproduces the full history of each verbete), cutting at
 `Histórico:`/repeated headers and stopping at the `Índice Remissivo` (Subject
