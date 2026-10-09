@@ -7,10 +7,11 @@ from pydantic import Field
 
 class Settings(BaseSettings):
     # Project paths
-    PROJECT_ROOT: Path = Path(__file__).parent.parent.parent
+    PROJECT_ROOT: Path = Path(__file__).parent.parent
     DATA_DIR: Path = PROJECT_ROOT / "data"
     RAW_DIR: Path = DATA_DIR / "raw"
     PROCESSED_DIR: Path = DATA_DIR / "processed"
+    FINAL_DIR: Path = DATA_DIR / "final"
     MODELS_DIR: Path = PROJECT_ROOT / "models"
     CHROMA_DIR: Path = PROJECT_ROOT / "chroma_db"
 
@@ -21,13 +22,12 @@ class Settings(BaseSettings):
     EMBEDDING_DEVICE: str = "cpu"
     EMBEDDING_NUM_THREADS: int = 8
 
-    # Ingestion - HuggingFace datasets
-    HF_DATASET: str = "McAuley-Lab/Amazon-Reviews-2023"
-    CATEGORIES: list[str] = ["raw_review_Electronics", "raw_review_Home_and_Kitchen"]
-    TARGET_SAMPLES: int = 15000
-    MIN_TEXT_LEN: int = 50
-    MAX_TEXT_LEN: int = 500
-    REQUIRE_VERIFIED_PURCHASE: bool = True
+    # Source - TST Livro de Jurisprudência (Súmulas, OJs, Precedentes Normativos)
+    TST_PDF_PATH: Path = RAW_DIR / "livrointernet12pdf.pdf"
+    TST_PDF_URL: str = "https://www.tst.jus.br/livro-de-sumulas-ojs-e-pns"
+    VERBETE_MIN_TEXT: int = 20
+    VERBETE_CURTO: int = 120
+    VERBETE_RUIDO: int = 30
 
     # ChromaDB
     COLLECTION_NAME: str = "amazon_reviews"
@@ -60,6 +60,9 @@ class Settings(BaseSettings):
     DEFAULT_SEARCH_K: int = 10
     MAX_SEARCH_K: int = 50
 
+    # Export
+    EXPORT_PATH: Path = FINAL_DIR / "tst.jsonl"
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
@@ -72,6 +75,7 @@ settings = Settings()
 for path in [
     settings.RAW_DIR,
     settings.PROCESSED_DIR,
+    settings.FINAL_DIR,
     settings.MODELS_DIR,
     settings.CHROMA_DIR,
 ]:

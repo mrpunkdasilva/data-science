@@ -1,13 +1,13 @@
-.PHONY: install ingest embed cluster quality search stats anomalies clusters pipeline test lint clean
+.PHONY: install ingest embed cluster quality search stats anomalies clusters pipeline export jsonl test lint clean
 
 install:
 	pip install -e ".[dev]"
 
 ingest:
-	python -m cli.main ingest --limit 15000
+	python -m cli.main ingest -i data/raw/livrointernet12pdf.pdf -o data/processed/tst.parquet
 
 embed:
-	python -m cli.main embed --batch-size 32
+	python -m cli.main embed --batch-size 32 --id-prefix verbete
 
 cluster:
 	python -m cli.main cluster
@@ -28,7 +28,10 @@ stats:
 	python -m cli.main stats
 
 pipeline:
-	python -m cli.main pipeline --limit 15000
+	python -m cli.main pipeline -i data/raw/livrointernet12pdf.pdf
+
+jsonl:
+	python -m cli.main export
 
 test:
 	pytest tests/ -v --tb=short

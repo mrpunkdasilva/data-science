@@ -62,7 +62,7 @@ def run_anomaly_detection(
 
     n_anomalies = sum(1 for s in scores if s > 0.7)  # threshold for "high" anomaly
     console_log(
-        f"Anomaly detection complete: {n_anomalies} high-anomaly reviews (score > 0.7)"
+        f"Anomaly detection complete: {n_anomalies} high-anomaly verbetes (score > 0.7)"
     )
 
 

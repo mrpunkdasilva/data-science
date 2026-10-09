@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "csds-352-capstone"
 version = "0.1.0"
-description = "Amazon Reviews Analysis Pipeline - Capstone Project"
+description = "TST Jurisprudence Analysis Pipeline - Capstone Project"
 authors = [{name = "Student", email = "student@example.com"}]
 license = {file = "LICENSE"}
 readme = "README.md"
@@ -18,6 +18,7 @@ dependencies = [
     "numpy>=1.24,<2.0",
     "pandas==2.2.3",
     "pypdf==6.19.0",
+    "pdfplumber==0.11.10",
     "rich==13.9.4",
     "scikit-learn==1.6.1",
     "torch==2.14.0",
@@ -53,7 +54,7 @@ package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["cli*", "ingest*", "embed*", "store*", "cluster*", "quality*", "search*", "config*"]
+include = ["cli*", "ingest*", "embed*", "store*", "cluster*", "quality*", "search*", "export*", "config*"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -93,7 +94,7 @@ warn_return_any = false
 
 [tool.black]
 extend-exclude = '\.ipynb$'
-line-length = 100
+line-length = 88
 target-version = ['py312']
 
 [tool.pytest.ini_options]

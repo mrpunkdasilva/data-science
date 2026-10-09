@@ -15,7 +15,7 @@ from chromadb.api.models.Collection import Collection
 
 def run_quality_classification(collection_name: str) -> None:
     """
-    Train classifier on heuristic labels, predict for all reviews.
+    Train classifier on heuristic labels, predict for all verbetes.
 
     Updates ChromaDB metadata with: quality_label (predicted)
     """
@@ -46,7 +46,7 @@ def run_quality_classification(collection_name: str) -> None:
     vectorizer = TfidfVectorizer(
         max_features=settings.CLASSIFIER_MAX_FEATURES,
         ngram_range=settings.CLASSIFIER_NGRAM_RANGE,
-        stop_words="english",
+        stop_words=None,
         min_df=2,
         max_df=0.95,
     )

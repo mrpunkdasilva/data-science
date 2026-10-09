@@ -4,89 +4,76 @@ import click
 from pathlib import Path
 from rich.console import Console
 
-from ingest.loader import load_reviews
+from ingest.tst import load_verbetes
 from embed.model import embed_reviews
 from store.client import get_chroma_client, get_collection
 from cluster.pipeline import run_clustering
 from quality.classifier import run_quality_classification
 from quality.anomaly import run_anomaly_detection
 from search.engine import search_reviews, list_clusters, get_anomalies, get_stats
+from export.jsonl import export_jsonl
 
 console = Console()
 
 
 @click.group()
 def cli() -> None:
-    """Amazon Reviews Analysis Pipeline - Capstone Project"""
+    """TST Livro de Jurisprudência Analysis Pipeline - Capstone Project"""
     pass
 
 
 @cli.command()
 @click.option(
-    "--categories",
-    "-c",
-    default="raw_review_Electronics,raw_review_Home_and_Kitchen",
-    help="Comma-separated HF dataset categories",
+    "--input",
+    "-i",
+    default="data/raw/livrointernet12pdf.pdf",
+    help="Path to the TST Livro de Jurisprudência PDF",
 )
-@click.option("--limit", "-l", default=15000, help="Total reviews to load")
 @click.option(
     "--output",
     "-o",
-    default="data/processed/reviews.parquet",
+    default="data/processed/tst.parquet",
     help="Output parquet path",
 )
-@click.option("--min-len", default=50, help="Minimum review text length")
-@click.option("--max-len", default=500, help="Maximum review text length")
-@click.option(
-    "--verified-only/--no-verified-only", default=True, help="Only verified purchases"
-)
+@click.option("--min-len", default=20, help="Minimum verbete text length")
 def ingest(
-    categories: str,
-    limit: int,
+    input: str,
     output: str,
     min_len: int,
-    max_len: int,
-    verified_only: bool,
 ) -> None:
-    """Load reviews from HuggingFace datasets and save to parquet."""
-    cat_list = [c.strip() for c in categories.split(",")]
-    console.print(
-        f"[bold green]Loading {limit} reviews from {len(cat_list)} categories...[/bold green]"
-    )
-    df = load_reviews(
-        categories=cat_list,
-        limit=limit,
-        min_text_len=min_len,
-        max_text_len=max_len,
-        verified_only=verified_only,
-    )
+    """Load verbetes (Súmulas, OJs, PNs) from the TST PDF and save to parquet."""
+    console.print(f"[bold green]Parsing verbetes from {input}...[/bold green]")
+    df = load_verbetes(pdf_path=input, min_text_len=min_len)
     Path(output).parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(output, index=False)
-    console.print(f"[bold green]Saved {len(df)} reviews to {output}[/bold green]")
+    console.print(f"[bold green]Saved {len(df)} verbetes to {output}[/bold green]")
 
 
 @cli.command()
 @click.option(
-    "--input", "-i", default="data/processed/reviews.parquet", help="Input parquet path"
+    "--input", "-i", default="data/processed/tst.parquet", help="Input parquet path"
 )
 @click.option("--collection", default="amazon_reviews", help="ChromaDB collection name")
 @click.option("--batch-size", "-b", default=32, help="Embedding batch size")
 @click.option("--device", default="cpu", help="Device: cpu or cuda")
+@click.option("--id-prefix", default="verbete", help="Record id prefix")
 def embed(
     input: str,
     collection: str,
     batch_size: int,
     device: str,
+    id_prefix: str,
 ) -> None:
     """Generate embeddings and store in ChromaDB."""
     console.print(
-        f"[bold green]Embedding reviews from {input} into {collection}...[/bold green]"
+        f"[bold green]Embedding verbetes from {input} into {collection}...[/bold green]"
     )
     embed_reviews(
         input_path=input,
         collection_name=collection,
         batch_size=batch_size,
         device=device,
+        id_prefix=id_prefix,
     )
     console.print("[bold green]Embedding complete![/bold green]")
 
@@ -136,36 +123,38 @@ def quality(
 @click.argument("query")
 @click.option("--k", "-k", default=10, help="Number of results")
 @click.option("--collection", default="amazon_reviews", help="ChromaDB collection name")
-@click.option("--category", default="", help="Filter by category")
-@click.option("--rating-min", default=0, help="Minimum rating (1-5)")
+@click.option("--tipo", default="", help="Filter by tipo (sumula/oj/precedente)")
+@click.option(
+    "--orgao", default="", help="Filter by orgão (TST/SBDI-1/SBDI-2/SDC/TP-OE)"
+)
 @click.option("--quality", default="", help="Filter by quality label")
 def search(
     query: str,
     k: int,
     collection: str,
-    category: str,
-    rating_min: int,
+    tipo: str,
+    orgao: str,
     quality: str,
 ) -> None:
-    """Semantic search for similar reviews."""
-    cat = category if category else None
-    rating = rating_min if rating_min > 0 else None
+    """Semantic search for similar verbetes."""
+    t = tipo if tipo else None
+    org = orgao if orgao else None
     qual = quality if quality else None
 
     results = search_reviews(
         query=query,
         k=k,
         collection_name=collection,
-        category=cat,
-        rating_min=rating,
+        tipo=t,
+        orgao=org,
         quality_label=qual,
     )
     for i, r in enumerate(results, 1):
         console.print(
-            f"\n[bold cyan]{i}.[/bold cyan] [yellow]{r['title']}[/yellow] (score: {r['score']:.3f})"
+            f"\n[bold cyan]{i}.[/bold cyan] [yellow]{r['tema']}[/yellow] (score: {r['score']:.3f})"
         )
         console.print(
-            f"  Category: {r['category']} | Rating: {r['rating']} | Helpful: {r['helpful_vote']}"
+            f"  Tipo: {r['tipo']} | Orgão: {r['orgao']} | Nº: {r['codigo']} | {r['doc_id']}"
         )
         console.print(
             f"  Quality: {r['quality_label']} | Cluster: {r['cluster_id']} | Anomaly: {r['anomaly_score']:.3f}"
@@ -184,12 +173,11 @@ def clusters(
     cluster_info = list_clusters(collection_name=collection, top_terms=top_terms)
     for c in cluster_info:
         console.print(
-            f"\n[bold magenta]Cluster {c['cluster_id']}[/bold magenta] ({c['size']} reviews)"
+            f"\n[bold magenta]Cluster {c['cluster_id']}[/bold magenta] ({c['size']} verbetes)"
         )
         console.print(
-            f"  Avg Rating: {c['avg_rating']:.2f} | Avg Helpful: {c['avg_helpful']:.1f}"
+            f"  Dominant Quality: {c['dominant_quality']} | Tipos: {c['tipos']}"
         )
-        console.print(f"  Dominant Quality: {c['dominant_quality']}")
         console.print(f"  Top Terms: {', '.join(c['top_terms'])}")
 
 
@@ -202,7 +190,7 @@ def anomalies(
     limit: int,
     min_score: float,
 ) -> None:
-    """Show top anomalous reviews."""
+    """Show top anomalous verbetes."""
     results = get_anomalies(
         collection_name=collection, limit=limit, min_score=min_score
     )
@@ -210,9 +198,9 @@ def anomalies(
         console.print(
             f"\n[bold red]{i}.[/bold red] Anomaly Score: {r['anomaly_score']:.3f}"
         )
-        console.print(f"  Title: {r['title']}")
+        console.print(f"  Tema: {r['tema']}")
         console.print(
-            f"  Category: {r['category']} | Rating: {r['rating']} | Quality: {r['quality_label']}"
+            f"  Tipo: {r['tipo']} | Orgão: {r['orgao']} | Nº: {r['codigo']} | Quality: {r['quality_label']}"
         )
         console.print(f"  {r['text'][:300]}...")
 
@@ -225,8 +213,9 @@ def stats(
     """Show collection statistics."""
     stats = get_stats(collection_name=collection)
     console.print(f"\n[bold]Collection:[/bold] {stats['collection']}")
-    console.print(f"[bold]Total Reviews:[/bold] {stats['total_reviews']}")
-    console.print(f"[bold]Categories:[/bold] {stats['categories']}")
+    console.print(f"[bold]Total Documents:[/bold] {stats['total_documents']}")
+    console.print(f"[bold]By Tipo:[/bold] {stats['tipos']}")
+    console.print(f"[bold]By Orgão:[/bold] {stats['orgaos']}")
     console.print(
         f"[bold]Clusters:[/bold] {stats['n_clusters']} (noise: {stats['noise_count']})"
     )
@@ -239,42 +228,69 @@ def stats(
 
 
 @cli.command()
-@click.option("--limit", "-l", default=15000, help="Total reviews to process")
 @click.option("--collection", default="amazon_reviews", help="ChromaDB collection name")
+@click.option(
+    "--output",
+    "-o",
+    default="data/final/tst.jsonl",
+    help="Output JSONL path",
+)
+def export(
+    collection: str,
+    output: str,
+) -> None:
+    """Export the enriched dataset (text + quality/cluster/anomaly labels) to JSONL."""
+    console.print(
+        f"[bold green]Exporting collection {collection} to {output}...[/bold green]"
+    )
+    n = export_jsonl(collection_name=collection, output_path=output)
+    console.print(f"[bold green]Exported {n} records to {output}[/bold green]")
+
+
+@cli.command()
+@click.option(
+    "--input",
+    "-i",
+    default="data/raw/livrointernet12pdf.pdf",
+    help="Path to the TST Livro de Jurisprudência PDF",
+)
+@click.option("--collection", default="amazon_reviews", help="ChromaDB collection name")
+@click.option("--min-len", default=20, help="Minimum verbete text length")
 @click.option("--skip-ingest", is_flag=True, help="Skip ingestion step")
 @click.option("--skip-embed", is_flag=True, help="Skip embedding step")
 @click.option("--skip-cluster", is_flag=True, help="Skip clustering step")
 @click.option("--skip-quality", is_flag=True, help="Skip quality step")
+@click.option("--skip-export", is_flag=True, help="Skip JSONL export step")
 def pipeline(
-    limit: int,
+    input: str,
     collection: str,
+    min_len: int,
     skip_ingest: bool,
     skip_embed: bool,
     skip_cluster: bool,
     skip_quality: bool,
+    skip_export: bool,
 ) -> None:
-    """Run full pipeline: ingest -> embed -> cluster -> quality."""
+    """Run full pipeline: ingest -> embed -> cluster -> quality -> export."""
     if not skip_ingest:
         console.print("[bold blue]=== INGEST ===[/bold blue]")
         ctx = click.get_current_context()
         ctx.invoke(
             ingest,
-            categories="raw_review_Electronics,raw_review_Home_and_Kitchen",
-            limit=limit,
-            output="data/processed/reviews.parquet",
-            min_len=50,
-            max_len=500,
-            verified_only=True,
+            input=input,
+            output="data/processed/tst.parquet",
+            min_len=min_len,
         )
     if not skip_embed:
         console.print("[bold blue]=== EMBED ===[/bold blue]")
         ctx = click.get_current_context()
         ctx.invoke(
             embed,
-            input="data/processed/reviews.parquet",
+            input="data/processed/tst.parquet",
             collection=collection,
             batch_size=32,
             device="cpu",
+            id_prefix="verbete",
         )
     if not skip_cluster:
         console.print("[bold blue]=== CLUSTER ===[/bold blue]")
@@ -284,13 +300,17 @@ def pipeline(
             collection=collection,
             umap_neighbors=15,
             umap_min_dist=0.1,
-            hdbscan_min_cluster=15,
+            hdbscan_min_cluster=10,
             hdbscan_min_samples=5,
         )
     if not skip_quality:
         console.print("[bold blue]=== QUALITY ===[/bold blue]")
         ctx = click.get_current_context()
         ctx.invoke(quality, collection=collection, contamination=0.05)
+    if not skip_export:
+        console.print("[bold blue]=== EXPORT ===[/bold blue]")
+        ctx = click.get_current_context()
+        ctx.invoke(export, collection=collection, output="data/final/tst.jsonl")
     console.print("[bold green]Pipeline complete![/bold green]")
 
 

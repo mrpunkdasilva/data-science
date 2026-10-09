@@ -103,19 +103,21 @@ capstone-pipeline:
     - >-
       pip install
       "numpy==1.26.4"
+      "pypdf==6.19.0"
+      "pdfplumber==0.11.10"
       "chromadb==0.5.5"
       "posthog>=2,<3"
-      "datasets==2.19.0"
       "hdbscan==0.8.39"
       "sentence-transformers==5.1.2"
       "umap-learn==0.5.9.post2"
       "pydantic==2.9.0"
       "pydantic-settings==2.5.0"
   script:
-    - pytest capstone/tests/ -v --tb=short
-    - python -m cli.main pipeline --limit 100
+    - cd capstone
+    - pytest tests/ -v --tb=short
+    - python -m cli.main pipeline -i tests/fixtures/tst-sample.pdf
     - python -m cli.main stats
-    - python -m cli.main search "broken" --k 3
+    - python -m cli.main search "insalubridade" --k 3
   allow_failure: false
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'

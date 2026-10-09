@@ -16,23 +16,23 @@ def search_reviews(
     query: str,
     k: int = 10,
     collection_name: str = "amazon_reviews",
-    category: str | None = None,
-    rating_min: int | None = None,
+    tipo: str | None = None,
+    orgao: str | None = None,
     quality_label: str | None = None,
 ) -> list[dict]:
     """
-    Semantic search for similar reviews.
+    Semantic search for similar verbetes.
 
     Args:
         query: Search query text
         k: Number of results to return
         collection_name: ChromaDB collection name
-        category: Filter by category (Electronics, Home_Kitchen)
-        rating_min: Minimum rating (1-5)
+        tipo: Filter by tipo (sumula/oj/precedente)
+        orgao: Filter by orgão emisor (TST/SBDI-1/SBDI-2/SDC/TP-OE)
         quality_label: Filter by quality label
 
     Returns:
-        List of review dicts with metadata and similarity score
+        List of verbete dicts with metadata and similarity score
     """
     client = get_chroma_client()
     collection = get_collection(collection_name)  # type: ignore[assignment]
@@ -42,10 +42,10 @@ def search_reviews(
 
     # Build where filter
     where: Where = {}
-    if category:
-        where["category"] = category
-    if rating_min:
-        where["rating"] = {"$gte": rating_min}
+    if tipo:
+        where["tipo"] = tipo
+    if orgao:
+        where["orgao"] = orgao
     if quality_label:
         where["quality_label"] = quality_label
 
@@ -67,13 +67,14 @@ def search_reviews(
             meta = metadatas[0][i]
             formatted.append(
                 {
-                    "review_id": ids[0][i],
-                    "title": meta.get("title", ""),
+                    "id": ids[0][i],
+                    "doc_id": meta.get("doc_id", ids[0][i]),
+                    "tipo": meta.get("tipo", ""),
+                    "orgao": meta.get("orgao", ""),
+                    "codigo": meta.get("codigo", ""),
+                    "tema": meta.get("tema", ""),
                     "text": documents[0][i],
-                    "category": meta.get("category", ""),
-                    "rating": meta.get("rating", 0),
-                    "helpful_vote": meta.get("helpful_vote", 0),
-                    "quality_label": meta.get("quality_label", "normal"),
+                    "quality_label": meta.get("quality_label", "completo"),
                     "cluster_id": meta.get("cluster_id", -1),
                     "anomaly_score": meta.get("anomaly_score", 0.0),
                     "score": 1.0 - distances[0][i],  # cosine similarity
@@ -108,28 +109,25 @@ def list_clusters(
         cid = int(meta.get("cluster_id", -1))
         if cid not in clusters:
             clusters[cid] = {
-                "reviews": [],
-                "ratings": [],
-                "helpful": [],
+                "texts": [],
                 "qualities": [],
+                "tipos": [],
             }
-        clusters[cid]["reviews"].append(doc)
-        clusters[cid]["ratings"].append(meta.get("rating", 0))
-        clusters[cid]["helpful"].append(meta.get("helpful_vote", 0))
-        clusters[cid]["qualities"].append(meta.get("quality_label", "normal"))
+        clusters[cid]["texts"].append(doc)
+        clusters[cid]["qualities"].append(meta.get("quality_label", "completo"))
+        clusters[cid]["tipos"].append(meta.get("tipo", ""))
 
     # Compute stats
     cluster_info: list[dict] = []
     for cid, data in sorted(clusters.items()):
         if cid == -1:
             continue  # skip noise
-        size = len(data["ratings"])
-        avg_rating = np.mean(data["ratings"])
-        avg_helpful = np.mean(data["helpful"])
+        size = len(data["tipos"])
         dominant_quality = max(set(data["qualities"]), key=data["qualities"].count)
+        tipo_counts = Counter(data["tipos"]).most_common(3)
 
         # Simple top terms (most frequent words in cluster)
-        all_text = " ".join(data["reviews"]).lower()
+        all_text = " ".join(data["texts"]).lower()
         words = [w for w in all_text.split() if len(w) > 3]
         top_words = [w for w, _ in Counter(words).most_common(top_terms)]
 
@@ -137,10 +135,9 @@ def list_clusters(
             {
                 "cluster_id": cid,
                 "size": size,
-                "avg_rating": round(avg_rating, 2),
-                "avg_helpful": round(avg_helpful, 1),
                 "dominant_quality": dominant_quality,
                 "top_terms": top_words,
+                "tipos": dict(tipo_counts),
             }
         )
 
@@ -153,10 +150,10 @@ def get_anomalies(
     min_score: float = 0.0,
 ) -> list[dict]:
     """
-    Get top anomalous reviews.
+    Get top anomalous verbetes.
 
     Returns:
-        List of review dicts sorted by anomaly_score descending
+        List of verbete dicts sorted by anomaly_score descending
     """
     client = get_chroma_client()
     collection = get_collection(collection_name)  # type: ignore[assignment]
@@ -174,13 +171,13 @@ def get_anomalies(
         if score >= min_score:
             anomalies.append(
                 {
-                    "review_id": uid,
-                    "title": meta.get("title", ""),
+                    "id": uid,
+                    "doc_id": meta.get("doc_id", uid),
+                    "tema": meta.get("tema", ""),
                     "text": doc,
-                    "category": meta.get("category", ""),
-                    "rating": meta.get("rating", 0),
-                    "helpful_vote": meta.get("helpful_vote", 0),
-                    "quality_label": meta.get("quality_label", "normal"),
+                    "tipo": meta.get("tipo", ""),
+                    "orgao": meta.get("orgao", ""),
+                    "quality_label": meta.get("quality_label", "completo"),
                     "cluster_id": meta.get("cluster_id", -1),
                     "anomaly_score": score,
                 }
@@ -200,16 +197,20 @@ def get_stats(collection_name: str = "amazon_reviews") -> dict:
 
     metadatas = result["metadatas"] or []
 
-    categories: dict[str, int] = {}
+    tipos: dict[str, int] = {}
+    orgaos: dict[str, int] = {}
     quality_dist: dict[str, int] = {}
     cluster_ids: set[int] = set()
     anomaly_scores: list[float] = []
 
     for m in metadatas:
-        cat = str(m.get("category", "unknown"))
-        categories[cat] = categories.get(cat, 0) + 1
+        t = str(m.get("tipo", "unknown"))
+        tipos[t] = tipos.get(t, 0) + 1
 
-        qlabel = str(m.get("quality_label", "normal"))
+        o = str(m.get("orgao", "unknown"))
+        orgaos[o] = orgaos.get(o, 0) + 1
+
+        qlabel = str(m.get("quality_label", "completo"))
         quality_dist[qlabel] = quality_dist.get(qlabel, 0) + 1
 
         cid = int(m.get("cluster_id", -1))
@@ -223,8 +224,9 @@ def get_stats(collection_name: str = "amazon_reviews") -> dict:
 
     return {
         "collection": collection_name,
-        "total_reviews": count,
-        "categories": categories,
+        "total_documents": count,
+        "tipos": tipos,
+        "orgaos": orgaos,
         "n_clusters": n_clusters,
         "noise_count": noise_count,
         "quality_distribution": quality_dist,

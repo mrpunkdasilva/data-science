@@ -52,22 +52,24 @@ def embed_reviews(
     collection_name: str,
     batch_size: int = 32,
     device: str = "cpu",
+    id_prefix: str = "verbete",
 ) -> None:
     """
-    Load reviews from parquet, generate embeddings, store in ChromaDB.
+    Load verbetes from parquet, generate embeddings, store in ChromaDB.
 
     Args:
-        input_path: Path to parquet file with reviews
+        input_path: Path to parquet file with the ingested verbetes
         collection_name: ChromaDB collection name
         batch_size: Embedding batch size
         device: Device to use (cpu/cuda)
+        id_prefix: Record id prefix (e.g. "verbete")
     """
-    console_log(f"Loading reviews from {input_path}...")
+    console_log(f"Loading verbetes from {input_path}...")
     df = pd.read_parquet(input_path)
-    console_log(f"Generating embeddings for {len(df)} reviews...")
+    console_log(f"Generating embeddings for {len(df)} verbetes...")
 
     model = get_model(device)
-    texts = (df["title"].fillna("") + " " + df["text"].fillna("")).tolist()
+    texts = (df["tema"].fillna("") + " " + df["text"].fillna("")).tolist()
 
     embeddings = embed_texts(texts, model=model, batch_size=batch_size)
 
@@ -76,7 +78,7 @@ def embed_reviews(
 
     console_log(f"Storing {len(embeddings)} embeddings in ChromaDB...")
     metadatas = df.to_dict(orient="records")
-    ids = [f"review_{i}" for i in range(len(df))]
+    ids = [f"{id_prefix}_{i}" for i in range(len(df))]
 
     for i in range(0, len(ids), settings.CHROMA_BATCH_SIZE):
         end = min(i + settings.CHROMA_BATCH_SIZE, len(ids))

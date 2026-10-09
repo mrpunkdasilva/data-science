@@ -1,33 +1,20 @@
-# Amazon Reviews Analysis Pipeline - Capstone Project
+# TST Jurisprudence Analysis Pipeline - Capstone Project
 
-Sistema de análise de reviews Amazon usando embeddings, clusterização e controle de qualidade.
+Pipeline de análise do **Livro de Jurisprudência do TST** (Súmulas, Orientações
+Jurisprudenciais e Precedentes Normativos) usando embeddings multilíngues,
+clusterização, busca semântica e controle de qualidade.
 
 ## Arquitetura
 
 ```
-Ingestão (HF Datasets) → Embeddings (paraphrase-multilingual-MiniLM-L12-v2)
+Ingestão (PDF → verbetes) → Embeddings (paraphrase-multilingual-MiniLM-L12-v2)
 → ChromaDB (HNSW, cosine) → UMAP + HDBSCAN → Quality Control (LogReg + IsolationForest)
-→ CLI Search/Analytics
+→ Export JSONL + CLI Search/Analytics
 ```
 
-## Comandos CLI
-
-```bash
-# Pipeline completo
-capstone pipeline --limit 15000
-
-# Passos individuais
-capstone ingest --limit 15000
-capstone embed --batch-size 32
-capstone cluster
-capstone quality --contamination 0.05
-
-# Busca e análise
-capstone search "broken screen" --k 10 --category Electronics
-capstone clusters --top-terms 5
-capstone anomalies --limit 20
-capstone stats
-```
+Cada verbete é segmentado do PDF mantendo apenas a redação vigente (o livro
+também reproduz o histórico completo de cada verbete), com corte em
+`Histórico:`/repetições de cabeçalho e parada no `Índice Remissivo`.
 
 ## Requisitos
 
@@ -41,34 +28,68 @@ capstone stats
 pip install -e ".[dev]"
 ```
 
-## Qualidade de Código
-
-```bash
-black .
-mypy .
-pytest tests/
-```
-
-## Modelo de Embedding
-
-- **paraphrase-multilingual-MiniLM-L12-v2** (118M params, 384-dim, multilíngue)
-- Roda em CPU (~2k docs/s no i5-1235U)
-
 ## Dados
 
-- Fonte: HuggingFace `McAuley-Lab/Amazon-Reviews-2023`
-- Categorias: Electronics, Home_and_Kitchen
-- Filtros: verified_purchase, text_len 50-500
+- Fonte oficial: [Livro de Súmulas, OJs e PNs](https://www.tst.jus.br/livro-de-sumulas-ojs-e-pns)
+- Arquivo: `data/raw/livrointernet12pdf.pdf` (579 páginas, não versionado)
+- Corpus extraído: ~1058 verbetes (~703 OJs, 235 Súmulas, 120 Precedentes Normativos)
+
+## Comandos CLI
+
+```bash
+# Pipeline completo (ingest -> embed -> cluster -> quality -> export)
+capstone pipeline -i data/raw/livrointernet12pdf.pdf
+
+# Passos individuais
+capstone ingest -i data/raw/livrointernet12pdf.pdf -o data/processed/tst.parquet
+capstone embed --batch-size 32 --id-prefix verbete
+capstone cluster
+capstone quality --contamination 0.05
+capstone export -o data/final/tst.jsonl
+
+# Busca e análise
+capstone search "adicional de insalubridade" --k 10 --tipo oj --orgao SBDI-1
+capstone clusters --top-terms 5
+capstone anomalies --limit 20
+capstone stats
+```
+
+## Export JSONL
+
+Cada linha de `data/final/tst.jsonl` é um verbete enriquecido:
+
+```json
+{
+  "id": "verbete_0",
+  "doc_id": "sumula_6",
+  "tipo": "sumula",
+  "orgao": "TST",
+  "codigo": 6,
+  "tema": "Quadro de carreira. Homologação. Equiparação salarial",
+  "text": "...",
+  "text_len": 353,
+  "source": "livrointernet12pdf.pdf",
+  "quality_label": "completo",
+  "cluster_id": 12,
+  "anomaly_score": 0.374641,
+  "umap_x": 5.487961,
+  "umap_y": 9.684173
+}
+```
 
 ## Labels Heurísticos (Quality Control)
 
 | Label | Regra |
 |-------|-------|
-| helpful | helpful_vote ≥ 10 AND rating ≥ 4 AND len > 100 |
-| funny | helpful_vote ≥ 5 AND keywords (funny, lol, 😂, haha) |
-| weird | rating ≤ 2 AND helpful_vote ≥ 5 AND keywords (weird, strange) |
-| fake_suspect | rating = 5 AND helpful_vote = 0 AND len < 80 AND marketing keywords |
-| normal | resto |
+| cancelado | cabeçalho indica `cancelad`, `(negativo)`, `revogad`, `cassad`, `superad` |
+| duplicado | corpo normalizado repetido em mais de um verbete |
+| ruido | texto com menos de 30 caracteres |
+| curto | texto entre 30 e 119 caracteres |
+| completo | texto com 120+ caracteres |
+
+## Modelo de Embedding
+
+- **paraphrase-multilingual-MiniLM-L12-v2** (118M params, 384-dim, multilíngue)
 
 ## Clusterização
 
@@ -78,3 +99,11 @@ pytest tests/
 ## Anomalia
 
 - IsolationForest: n_estimators=200, contamination=0.05
+
+## Qualidade de Código
+
+```bash
+black .
+mypy .
+pytest tests/
+```
