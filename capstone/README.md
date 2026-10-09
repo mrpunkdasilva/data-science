@@ -204,6 +204,33 @@ capstone stats
 `capstone pipeline` accepts `--skip-ingest`, `--skip-embed`, `--skip-cluster`,
 `--skip-quality` and `--skip-export` to resume from any stage.
 
+### Command parameters
+
+| Command | Parameter | Meaning | Default |
+|---------|-----------|---------|---------|
+| `search` | `QUERY` (positional) | Text to search for by meaning | required |
+| `search` | `-k`, `--k` | Number of results to return, ranked by similarity score (0 to 1) | `10` |
+| `search` | `--tipo` | Keep only this verbete type (`sumula`, `oj`, `precedente`) | all |
+| `search` | `--orgao` | Keep only this issuing body (`TST`, `SBDI-1`, `SBDI-2`, `SDC`, `TP-OE`) | all |
+| `search` | `--quality` | Keep only this quality label (`completo`, `cancelado`, `curto`, `duplicado`) | all |
+| `embed` | `-i`, `--input` | Parquet file produced by `ingest` | `data/processed/tst.parquet` |
+| `embed` | `-b`, `--batch-size` | Number of texts embedded per forward pass | `32` |
+| `embed` | `--device` | Compute device (`cpu` or `cuda`) | `cpu` |
+| `embed` | `--id-prefix` | Prefix for stored record IDs (e.g. `verbete_0`) | `verbete` |
+| `cluster` | `--umap-neighbors` | UMAP `n_neighbors` (larger keeps more global structure) | `15` |
+| `cluster` | `--umap-min-dist` | UMAP `min_dist` (smaller packs points tighter) | `0.1` |
+| `cluster` | `--hdbscan-min-cluster` | Minimum points to form a cluster | `15` |
+| `cluster` | `--hdbscan-min-samples` | HDBSCAN density smoothing | `5` |
+| `quality` | `--contamination` | Expected outlier ratio for IsolationForest (0.05 = 5%) | `0.05` |
+| `clusters` | `--top-terms` | Number of frequent terms shown per cluster | `5` |
+| `anomalies` | `-l`, `--limit` | Number of anomalies to display | `20` |
+| `anomalies` | `--min-score` | Only show anomalies at or above this score | `0.0` |
+| `ingest` | `-i`, `--input` | Source TST PDF | `data/raw/livrointernet12pdf.pdf` |
+| `ingest` | `-o`, `--output` | Output Parquet path | `data/processed/tst.parquet` |
+| `ingest` | `--min-len` | Discard verbetes shorter than this many characters | `20` |
+| `export` | `-o`, `--output` | Output JSONL path | `data/final/tst.jsonl` |
+| all | `--collection` | ChromaDB collection name | `amazon_reviews` |
+
 ### Makefile shortcuts
 
 ```bash
