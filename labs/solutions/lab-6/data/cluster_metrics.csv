@@ -1,0 +1,5 @@
+metrica,valor
+Homogeneity,0.524888
+Completeness,0.540147
+V-measure,0.532408
+Adjusted Rand Index,0.653625
