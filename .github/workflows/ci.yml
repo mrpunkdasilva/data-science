@@ -36,6 +36,9 @@ jobs:
           python -m pip install --upgrade pip setuptools
           pip install -r requirements-dev.txt
           pip install -e .
+          # labs/solutions/lab-7 API stack (pinned in labs/pyproject.toml);
+          # without them mypy cannot resolve fastapi/httpx types in CI
+          pip install fastapi==0.115.0 httpx==0.28.1
 
       - name: Run black
         run: black --check .
@@ -61,6 +64,8 @@ jobs:
           python -m pip install --upgrade pip setuptools
           pip install -e .
           pip install jupyter nbconvert
+          # lab-7 notebook drives the FastAPI app through httpx.ASGITransport
+          pip install fastapi==0.115.0 httpx==0.28.1
 
       - name: Execute notebooks
         run: |
