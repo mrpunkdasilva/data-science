@@ -119,7 +119,7 @@ variables** or a **`.env`** file placed in `capstone/` (not versioned):
 # capstone/.env (optional)
 EMBEDDING_BATCH_SIZE=32
 EMBEDDING_DEVICE=cpu
-COLLECTION_NAME=amazon_reviews
+COLLECTION_NAME=tst_verbetes
 ANOMALY_CONTAMINATION=0.05
 ```
 
@@ -134,7 +134,7 @@ Key settings:
 | `TST_PDF_PATH` | `data/raw/livrointernet12pdf.pdf` | Input PDF path |
 | `VERBETE_MIN_TEXT` | `20` | Drop verbetes shorter than this |
 | `VERBETE_RUIDO` / `VERBETE_CURTO` | `30` / `120` | Thresholds for `ruido`/`curto` labels |
-| `COLLECTION_NAME` | `amazon_reviews` | ChromaDB collection (kept for backwards compatibility) |
+| `COLLECTION_NAME` | `tst_verbetes` | ChromaDB collection name |
 | `HNSW_SPACE` | `cosine` | Vector index distance metric |
 | `UMAP_N_NEIGHBORS`, `UMAP_MIN_DIST` | `15`, `0.1` | UMAP projection |
 | `HDBSCAN_MIN_CLUSTER_SIZE`, `HDBSCAN_MIN_SAMPLES` | `15`, `5` | HDBSCAN clustering |
@@ -175,9 +175,25 @@ capstone pipeline -i data/raw/livrointernet12pdf.pdf
 
 - Official source: [Book of Precedents, OJs and PNs](https://www.tst.jus.br/livro-de-sumulas-ojs-e-pns)
 - File: `data/raw/livrointernet12pdf.pdf` (579 pages, not versioned)
-- Extracted corpus: ~1058 verbetes (~703 OJs, 235 Precedents, 120 Normative Precedents)
+- Extracted corpus: ~1058 verbetes (~703 OJs, 235 Súmulas, 120 Precedents)
 - A small offline fixture (`tests/fixtures/tst-sample.pdf`, 22 verbetes) is
   committed so that CI can run the pipeline without network access.
+
+`ingest` accepts either a PDF (`-i file.pdf`) or a plain-text file
+(`-i file.txt`), detected by the file extension. Plain text is treated as one
+verbete per non-empty line, which makes it easy to feed pre-extracted or
+manually curated corpora through the same downstream stages.
+
+### Licensing and attribution
+
+- **Code:** released under the MIT License (see [`LICENSE`](LICENSE)).
+- **Data:** the source document, the TST *Livro de Súmulas, Orientações
+  Jurisprudenciais e Precedentes Normativos*, is an official public act published
+  by the Tribunal Superior do Trabalho. Under Brazilian Law 9.610/98, art. 8, IV,
+  official acts are **not protected by copyright**. The source PDF is **not
+  redistributed** in this repository; it is downloaded from the official TST page
+  above. All extracted text is the property of its original public source and is
+  used here for research and educational purposes only.
 
 ## Usage
 
@@ -229,7 +245,7 @@ capstone stats
 | `ingest` | `-o`, `--output` | Output Parquet path | `data/processed/tst.parquet` |
 | `ingest` | `--min-len` | Discard verbetes shorter than this many characters | `20` |
 | `export` | `-o`, `--output` | Output JSONL path | `data/final/tst.jsonl` |
-| all | `--collection` | ChromaDB collection name | `amazon_reviews` |
+| all | `--collection` | ChromaDB collection name | `tst_verbetes` |
 
 ### Makefile shortcuts
 
@@ -238,8 +254,76 @@ make install    # pip install -e ".[dev]"
 make pipeline   # full pipeline
 make ingest embed cluster quality export
 make search clusters anomalies stats
+make dashboard  # launch the Streamlit interface
+make docs       # regenerate figures + reports (PDF and PPTX)
 make test lint clean rebuild
 ```
+
+## Dashboard (Streamlit + Plotly)
+
+An interactive interface for exploring the corpus without the CLI:
+
+```bash
+capstone-dashboard          # or: make dashboard / streamlit run src/app/dashboard.py
+```
+
+It reads `data/final/tst.jsonl` (and the ChromaDB collection, when available) and
+provides three tabs:
+
+- **Search** — semantic (or lexical fallback) search with type/quality filters and
+  result inspection.
+- **Cluster map** — UMAP scatter colored by cluster, plus per-cluster size and top
+  terms.
+- **Quality & anomalies** — label distribution, text-length histogram, anomaly
+  score distribution and a table of the most anomalous verbetes.
+
+## Reports
+
+Reproducible figures and reports are generated from the live artifacts, as both
+PDF (document) and PPTX (slides):
+
+```bash
+make docs       # -> docs/figures/*.png, docs/report.pdf, docs/qc-report.pdf,
+                #    docs/report.pptx, docs/qc-report.pptx
+```
+
+- [`docs/report.md`](docs/report.md) — technical report (architecture, results,
+  limitations, reproduction steps).
+- [`docs/qc-report.md`](docs/qc-report.md) — data-quality-control report (labels,
+  classifier evaluation, anomalies, clusters).
+- [`docs/figures/`](docs/figures/) — figures and a machine-readable `summary.json`.
+
+PDF rendering uses `pandoc` with the WeasyPrint engine (`--pdf-engine=weasyprint`).
+PPTX rendering uses the same `pandoc` sources with `--slide-level=2`.
+
+## Presentation
+
+The demo deck and the spoken script live alongside the reports:
+
+```bash
+make slides     # -> docs/slides.pdf and docs/slides.pptx (Marp, via npx)
+```
+
+- [`docs/slides.md`](docs/slides.md) — Marp deck (concepts, architecture, results,
+  annotated references).
+- [`docs/demo-script.md`](docs/demo-script.md) — timed walkthrough, figure-reading
+  guide and likely questions with answers.
+- `docs/report.pptx` and `docs/qc-report.pptx` — slide versions of the two reports.
+
+Slide rendering uses `@marp-team/marp-cli` through `npx` (needs network the first
+time).
+
+## Docker
+
+A self-contained image builds the package and runs the pipeline once on the
+offline fixture, so the dashboard starts with data and needs no network access:
+
+```bash
+docker compose up --build      # from the repository root -> http://localhost:8501
+```
+
+The image is defined in [`Dockerfile`](Dockerfile); the Compose file lives at the
+repository root (`docker-compose.yml`).
 
 ## JSONL Export
 
@@ -294,7 +378,7 @@ capstone/
 ├── src/
 │   ├── cli/main.py          # Click CLI (ingest, embed, cluster, quality, search, export, pipeline)
 │   ├── config.py            # pydantic-settings configuration
-│   ├── ingest/tst.py        # PDF → verbetes (segmentation + heuristic labels)
+│   ├── ingest/tst.py        # PDF/TXT → verbetes (segmentation + heuristic labels)
 │   ├── embed/model.py       # SentenceTransformer embeddings
 │   ├── store/client.py      # ChromaDB client/collection
 │   ├── cluster/pipeline.py  # UMAP + HDBSCAN
@@ -302,8 +386,13 @@ capstone/
 │   ├── quality/anomaly.py   # IsolationForest anomaly detection
 │   ├── search/engine.py     # Semantic search + analytics
 │   ├── export/jsonl.py      # JSONL export
-│   └── app/main.py          # Package entry point
-└── tests/                   # Pytest suite + offline PDF fixture
+│   ├── app/dashboard.py     # Streamlit + Plotly exploration interface
+│   └── app/main.py          # Dashboard launcher (capstone-dashboard)
+├── scripts/                 # Report figure generation
+├── docs/                    # Technical report, QC report, figures (PDFs)
+├── tests/                   # Pytest suite + offline PDF fixture
+├── Dockerfile               # Container image (pipeline + dashboard)
+└── LICENSE                  # MIT (code) + data licensing note
 ```
 
 ## Code Quality
