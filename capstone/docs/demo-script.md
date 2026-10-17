@@ -6,10 +6,8 @@
 **Principle:** the slides carry facts; you carry the story. Never read a slide
 aloud word by word - explain it in your own words.
 
-This script is written so you can present **without having read any of the
-references**. Every concept is explained in plain language here and on the
-slides. If you are asked about a paper, the backup slide gives a one-line
-explanation of each one.
+This script is written so you can present without any outside material. Every
+concept is explained in plain language here and on the slides.
 
 ---
 
@@ -348,7 +346,7 @@ extraction.
 to an interactive, quality-checked knowledge base - reproducible, tested and
 containerised. Thank you - happy to take questions."
 
-Keep the **backup slides** (references, commands, glossary) ready for questions.
+Keep the **backup slides** (commands, glossary) ready for questions.
 
 ---
 

@@ -195,18 +195,3 @@ python scripts/make_report_figures.py   # regenerates the figures and summary.js
 
 All numbers in this report are derived from `docs/figures/summary.json`, which
 the figure script writes from the pipeline artifacts.
-
-## 9. Key methods and their sources (in one line each)
-
-1. **Sentence-BERT** (Reimers & Gurevych, 2019) - how to train transformer
-   networks to produce high-quality sentence embeddings; the model family behind
-   our 384-D vectors.
-2. **UMAP** (McInnes et al., 2018) - the dimensionality-reduction method used for
-   the 2D projection.
-3. **HDBSCAN** (Campello et al., 2013) - the density-based clustering method used
-   to group the corpus and mark noise.
-4. **Isolation Forest** (Liu, Ting & Zhou, 2008) - the anomaly-detection method
-   used to score unusual verbetes.
-
-You do not need to read these papers to follow this report; each is summarised
-above. Full citations appear in the technical report (`report.md`).

@@ -45,7 +45,7 @@ Gustavo Henrique de Jesus da Silva
 5. Live demo (dashboard + CLI)
 6. Results
 7. Engineering: tests, CI, Docker
-8. Limitations, future work, references
+8. Limitations and future work
 
 <!-- Plan: ~28 min. The live demo is the centerpiece (~8 min). Concept slides
 are short and can be skimmed if you are running late. -->
@@ -375,23 +375,6 @@ make dashboard   # interactive UI
 **Thanks - questions?**
 
 <!-- Backup slides follow; use only if asked. -->
-
----
-<!-- _header: "Backup" -->
-
-## References (with a one-line explanation)
-
-1. **TST** - *Livro de Súmulas, OJs e Precedentes Normativos*. The data source
-   (official public act, not copyrighted).
-2. **Reimers & Gurevych, 2019** - *Sentence-BERT*. Shows how to train
-   transformer networks to produce good sentence embeddings (our embedding
-   family).
-3. **McInnes et al., 2018** - *UMAP*. The dimensionality-reduction method we use
-   to visualise the vectors in 2D.
-4. **Campello et al., 2013** - *HDBSCAN*. The density-based clustering method.
-5. **Liu, Ting & Zhou, 2008** - *Isolation Forest*. The anomaly-detection method.
-
-<!-- You do NOT need to have read these. Each is one sentence above. -->
 
 ---
 <!-- _header: "Backup" -->

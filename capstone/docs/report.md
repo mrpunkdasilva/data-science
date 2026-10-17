@@ -176,21 +176,3 @@ make dashboard           # interactive Streamlit interface
 
 The raw PDF is expected at `data/raw/livrointernet12pdf.pdf`. The ABNT sample
 fixture `tests/fixtures/tst-sample.pdf` allows the pipeline to run offline.
-
-## References
-
-1. TST, *Livro de Súmulas, Orientações Jurisprudenciais e Precedentes
-   Normativos*. https://www.tst.jus.br/livro-de-sumulas-ojs-e-pns
-   - The data source: an official public act, not protected by copyright.
-2. Reimers, N., Gurevych, I. *Sentence-BERT: Sentence Embeddings using Siamese
-   BERT-Networks*, 2019.
-   - In one line: how to train transformer networks to produce high-quality
-     sentence embeddings (the model family used here).
-3. McInnes, L., Healy, J., Melville, J. *UMAP: Uniform Manifold Approximation
-   and Projection for Dimension Reduction*, 2018.
-   - In one line: the dimensionality-reduction method used for the 2D projection.
-4. Campello, R. et al. *Density-Based Clustering Based on Hierarchical Density
-   Estimates (HDBSCAN)*, 2013.
-   - In one line: the density-based clustering method used to group the corpus.
-5. Liu, F. T., Ting, K. M., Zhou, Z.-H. *Isolation Forest*, 2008.
-   - In one line: the anomaly-detection method used to score unusual verbetes.
