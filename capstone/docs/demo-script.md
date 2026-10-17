@@ -240,20 +240,75 @@ the most intuitive tab.*
 > exactly the kind of document a human should double-check."
 
 > "To prove that the interface is not doing anything special, let me run the same
-> engine from the command line."
+> engine from the command line. Everything the dashboard shows is also a scripted
+> command, and that matters, because a result I can only reproduce by clicking
+> buttons is not really reproducible."
 
-*Stage: run the commands below and narrate the output as it appears.*
+*Stage: run the commands below one at a time and narrate each output as it appears.
+Keep the terminal font large, because the audience reads the fields with me.*
+
+First, semantic search:
 
 ```bash
 capstone search "hora extra" -k 5
+```
+
+> "This is the same search as the first tab. For every hit I print the theme, then
+> the cosine similarity score, and then three lines of metadata. The score measures
+> how close my query is to the verbete, so a value in the zero point eight range is
+> a strong match. The next line gives the document type, the court body, the
+> reference number and the internal id. The line after that gives the predicted
+> quality label, the cluster the document fell into, and its anomaly score. The last
+> line is the opening of the text itself, so I can judge the match without opening
+> another window."
+
+Then the clusters:
+
+```bash
 capstone clusters --top-terms 5
+```
+
+> "This prints one block per cluster discovered by HDBSCAN. For each cluster I show
+> its size, its dominant quality label, the breakdown by document type, and the five
+> most frequent meaningful words, which I call the top terms. Cluster one is the main
+> body of the corpus: one thousand and nine verbetes, almost all OJs and súmulas,
+> dominated by the completo label, and its vocabulary circles around trabalho,
+> súmula, decorrência, cancelada and empregado. Cluster zero is the small historical
+> group of thirty-five precedentes, all marked cancelado, and its words are concede,
+> homologação, sessão, empregado and cláusula. Those words are a fast, honest summary
+> of what each cluster is about, and they are stripped of stopwords, punctuation and
+> dates so that what you read is a topic and not raw token noise."
+
+Then the anomalies:
+
+```bash
 capstone anomalies --limit 10
+```
+
+> "Here I ask the Isolation Forest for the ten most unusual verbetes. An anomaly
+> score near one means the model finds the document highly atypical, and near zero
+> means ordinary. For each one I print the score, the theme, the same identifying
+> metadata, and a snippet of the text. Read the themes and the pattern I mentioned
+> on the quality tab shows up again: the strongest outliers are rare historical
+> precedentes, many of them rural-work rulings from the SDC. That is exactly the
+> short list a human reviewer should open first."
+
+And finally the whole-corpus summary:
+
+```bash
 capstone stats
 ```
 
-> "Same results, same engine, no dashboard. That is the point: the dashboard is a
-> thin layer on top of a real, scriptable pipeline. And `stats` confirms what I
-> told you at the start: one thousand and fifty-eight verbetes."
+> "This is the whole-corpus summary. It confirms the numbers I quoted at the start:
+> one thousand and fifty-eight verbetes in total, split into seven hundred and three
+> OJs, two hundred and thirty-five súmulas and one hundred and twenty precedentes. It
+> also prints the distribution by court body and the predicted quality mix, which is
+> where the three hundred and thirty-four cancelled documents appear."
+
+> "So the same engine answers the same questions from a script as from the
+> dashboard. That is the point: the dashboard is a thin layer on top of a real,
+> scriptable pipeline, and every number you just saw is reproducible with one
+> command."
 
 *Timing guard: stop the demo at 20:00 even if I still have things to show, because
 the results section needs its time.*
