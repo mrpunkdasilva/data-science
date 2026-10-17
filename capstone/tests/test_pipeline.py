@@ -12,7 +12,7 @@ def test_config_loads():
         == "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     )
     assert settings.EMBEDDING_DIM == 384
-    assert settings.COLLECTION_NAME == "amazon_reviews"
+    assert settings.COLLECTION_NAME == "tst_verbetes"
     assert settings.TST_PDF_PATH.name == "livrointernet12pdf.pdf"
     assert settings.VERBETE_MIN_TEXT == 20
     assert settings.VERBETE_CURTO == 120
@@ -260,6 +260,113 @@ def test_logistic_regression():
     clf.fit(X_vec, y)
     pred = clf.predict(vec.transform(["awesome product"]))
     assert pred[0] == "positive"
+
+
+def test_load_verbetes_from_plain_text(tmp_path):
+    """Plain-text ingestion parses the same verbete types as the PDF reader."""
+    from ingest.tst import load_verbetes
+
+    content = "\n".join(
+        [
+            "SÚMULA 1 Futuro do adicional de insalubridade",
+            "Texto da súmula um sobre insalubridade em grau médio e suas"
+            " consequências legais para o trabalhador.",
+            "OJ-SDI1-92 - 1988. Adicional de insalubridade",
+            "Texto da orientação jurisprudencial noventa e dois com corpo"
+            " suficientemente longo para não ser descartado pelo limite.",
+            "PN-1 (negativo) - Cancelamento de precedente. Tema repetitivo",
+            "Texto do precedente normativo um com corpo suficientemente longo"
+            " para permanecer no resultado da ingestão de texto.",
+        ]
+    )
+    source = tmp_path / "verbetes.txt"
+    source.write_text(content, encoding="utf-8")
+
+    df = load_verbetes(source_path=source, min_text_len=20)
+
+    assert set(df["tipo"]) == {"sumula", "oj", "precedente"}
+    assert df.loc[df["tipo"] == "oj", "orgao"].iloc[0] == "SBDI-1"
+    assert (df["source"] == "verbetes.txt").all()
+
+
+def test_load_verbetes_rejects_unknown_format(tmp_path):
+    """An unsupported extension raises a clear error."""
+    from ingest.tst import load_verbetes
+
+    source = tmp_path / "verbetes.csv"
+    source.write_text("a,b\n1,2\n", encoding="utf-8")
+
+    with pytest.raises(ValueError):
+        load_verbetes(source_path=source)
+
+
+def test_search_reviews_filters():
+    """Semantic search supports single and combined metadata filters.
+
+    ChromaDB requires an explicit $and when more than one condition is given,
+    so combining tipo + orgao + quality_label must not raise.
+    """
+    from typing import Any
+    from search.engine import search_reviews
+    from store.client import get_chroma_client
+
+    client: Any = get_chroma_client()
+    coll_name = "test_search_filters"
+    if [c for c in client.list_collections() if c.name == coll_name]:
+        client.delete_collection(coll_name)
+    collection = client.create_collection(name=coll_name)
+
+    base = {
+        "orgao": "TST",
+        "tema": "Adicional de insalubridade",
+        "text_len": 40,
+        "source": "tst-sample.pdf",
+        "cluster_id": 0,
+        "anomaly_score": 0.1,
+    }
+    collection.add(
+        ids=["v0", "v1", "v2"],
+        documents=[
+            "Súmula sobre adicional de insalubridade em grau médio.",
+            "OJ sobre adicional de insalubridade para o trabalhador.",
+            "Precedente normativo sobre adicional de insalubridade.",
+        ],
+        metadatas=[
+            {
+                **base,
+                "doc_id": "sumula_1",
+                "tipo": "sumula",
+                "quality_label": "completo",
+            },
+            {**base, "doc_id": "oj_1", "tipo": "oj", "quality_label": "completo"},
+            {
+                **base,
+                "doc_id": "precedente_1",
+                "tipo": "precedente",
+                "quality_label": "curto",
+            },
+        ],
+    )
+
+    single = search_reviews(
+        "adicional de insalubridade", k=5, collection_name=coll_name, tipo="oj"
+    )
+    assert [r["tipo"] for r in single] == ["oj"]
+
+    combined = search_reviews(
+        "adicional de insalubridade",
+        k=5,
+        collection_name=coll_name,
+        tipo="oj",
+        orgao="TST",
+        quality_label="completo",
+    )
+    client.delete_collection(coll_name)
+
+    assert len(combined) == 1
+    assert combined[0]["tipo"] == "oj"
+    assert combined[0]["orgao"] == "TST"
+    assert combined[0]["quality_label"] == "completo"
 
 
 if __name__ == "__main__":

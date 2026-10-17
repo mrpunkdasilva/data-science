@@ -15,7 +15,7 @@ from chromadb.types import Where
 def search_reviews(
     query: str,
     k: int = 10,
-    collection_name: str = "amazon_reviews",
+    collection_name: str = settings.COLLECTION_NAME,
     tipo: str | None = None,
     orgao: str | None = None,
     quality_label: str | None = None,
@@ -40,19 +40,25 @@ def search_reviews(
     model = get_model()
     query_embedding = model.encode([query], normalize_embeddings=True).tolist()
 
-    # Build where filter
-    where: Where = {}
+    # Build where filter (Chroma needs $and for multiple conditions)
+    conditions: list[dict] = []
     if tipo:
-        where["tipo"] = tipo
+        conditions.append({"tipo": tipo})
     if orgao:
-        where["orgao"] = orgao
+        conditions.append({"orgao": orgao})
     if quality_label:
-        where["quality_label"] = quality_label
+        conditions.append({"quality_label": quality_label})
+
+    where: Where | None = None
+    if len(conditions) == 1:
+        where = conditions[0]  # type: ignore[assignment]
+    elif len(conditions) > 1:
+        where = {"$and": conditions}  # type: ignore[assignment]
 
     results = collection.query(
         query_embeddings=query_embedding,
         n_results=min(k, settings.MAX_SEARCH_K),
-        where=where if where else None,
+        where=where,
         include=["documents", "metadatas", "distances"],  # type: ignore[arg-type]
     )
 
@@ -85,7 +91,7 @@ def search_reviews(
 
 
 def list_clusters(
-    collection_name: str = "amazon_reviews",
+    collection_name: str = settings.COLLECTION_NAME,
     top_terms: int = 5,
 ) -> list[dict]:
     """
@@ -145,7 +151,7 @@ def list_clusters(
 
 
 def get_anomalies(
-    collection_name: str = "amazon_reviews",
+    collection_name: str = settings.COLLECTION_NAME,
     limit: int = 20,
     min_score: float = 0.0,
 ) -> list[dict]:
@@ -187,7 +193,7 @@ def get_anomalies(
     return anomalies[:limit]
 
 
-def get_stats(collection_name: str = "amazon_reviews") -> dict:
+def get_stats(collection_name: str = settings.COLLECTION_NAME) -> dict:
     """Get collection statistics."""
     client = get_chroma_client()
     collection = get_collection(collection_name)  # type: ignore[assignment]
