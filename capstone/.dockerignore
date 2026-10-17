@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Generated pipeline artifacts (rebuilt inside the image from the fixture)
+data/
+chroma_db/
+models/
+.hf-cache/
+
+# Local tooling caches and reports
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+docs/
+graphify-out/
