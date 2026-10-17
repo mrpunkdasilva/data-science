@@ -1,4 +1,4 @@
-.PHONY: install ingest embed cluster quality search stats anomalies clusters pipeline export jsonl test lint clean
+.PHONY: install ingest embed cluster quality search stats anomalies clusters pipeline export jsonl dashboard docs slides test lint clean
 
 install:
 	pip install -e ".[dev]"
@@ -32,6 +32,20 @@ pipeline:
 
 jsonl:
 	python -m cli.main export
+
+dashboard:
+	streamlit run src/app/dashboard.py
+
+docs:
+	python scripts/make_report_figures.py
+	cd docs && pandoc report.md -o report.pdf --pdf-engine=weasyprint --toc --number-sections
+	cd docs && pandoc qc-report.md -o qc-report.pdf --pdf-engine=weasyprint --toc --number-sections
+	cd docs && pandoc report.md -o report.pptx --slide-level=2
+	cd docs && pandoc qc-report.md -o qc-report.pptx --slide-level=2
+
+slides:
+	cd docs && npx --yes @marp-team/marp-cli@latest slides.md --pdf --allow-local-files -o slides.pdf
+	cd docs && npx --yes @marp-team/marp-cli@latest slides.md --pptx --allow-local-files -o slides.pptx
 
 test:
 	pytest tests/ -v --tb=short

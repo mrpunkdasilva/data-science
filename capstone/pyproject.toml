@@ -15,27 +15,24 @@ dependencies = [
     "ipykernel==6.29.5",
     "ipympl==0.9.6",
     "matplotlib==3.10.0",
-    "numpy>=1.24,<2.0",
+    "numpy==1.26.4",
     "pandas==2.2.3",
     "pyarrow==17.0.0",
     "pypdf==6.19.0",
-    "pdfplumber==0.11.10",
+    "pdfplumber==0.11.9",
     "rich==13.9.4",
     "scikit-learn==1.6.1",
     "torch==2.14.0",
-    "torchvision==0.29.0",
     "seaborn==0.13.2",
     "sentence-transformers==5.1.2",
     "chromadb==0.5.5",
     "posthog>=2,<3",
     "hdbscan==0.8.39",
     "umap-learn==0.5.9.post2",
-    "datasets==2.19.0",
-    "fastapi==0.115.0",
-    "uvicorn==0.30.0",
-    "typer==0.12.5",
     "pydantic-settings==2.5.0",
     "pydantic==2.9.0",
+    "streamlit==1.45.0",
+    "plotly==5.24.1",
 ]
 
 [project.optional-dependencies]
@@ -49,13 +46,14 @@ dev = [
 
 [project.scripts]
 capstone = "cli.main:cli"
+capstone-dashboard = "app.main:main"
 
 [tool.setuptools]
 package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["cli*", "ingest*", "embed*", "store*", "cluster*", "quality*", "search*", "export*", "config*"]
+include = ["cli*", "ingest*", "embed*", "store*", "cluster*", "quality*", "search*", "export*", "config*", "app*", "lib*"]
 
 [tool.mypy]
 python_version = "3.12"
