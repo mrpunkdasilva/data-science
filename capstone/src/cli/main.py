@@ -12,6 +12,7 @@ from quality.classifier import run_quality_classification
 from quality.anomaly import run_anomaly_detection
 from search.engine import search_reviews, list_clusters, get_anomalies, get_stats
 from export.jsonl import export_jsonl
+from config import settings
 
 console = Console()
 
@@ -27,7 +28,7 @@ def cli() -> None:
     "--input",
     "-i",
     default="data/raw/livrointernet12pdf.pdf",
-    help="Path to the TST Livro de Jurisprudência PDF",
+    help="Path to the TST Livro de Jurisprudência PDF or a plain-text file",
 )
 @click.option(
     "--output",
@@ -41,9 +42,9 @@ def ingest(
     output: str,
     min_len: int,
 ) -> None:
-    """Load verbetes (Súmulas, OJs, PNs) from the TST PDF and save to parquet."""
+    """Load verbetes (Súmulas, OJs, PNs) from a PDF or plain-text file to parquet."""
     console.print(f"[bold green]Parsing verbetes from {input}...[/bold green]")
-    df = load_verbetes(pdf_path=input, min_text_len=min_len)
+    df = load_verbetes(source_path=input, min_text_len=min_len)
     Path(output).parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(output, index=False)
     console.print(f"[bold green]Saved {len(df)} verbetes to {output}[/bold green]")
@@ -53,7 +54,9 @@ def ingest(
 @click.option(
     "--input", "-i", default="data/processed/tst.parquet", help="Input parquet path"
 )
-@click.option("--collection", default="amazon_reviews", help="ChromaDB collection name")
+@click.option(
+    "--collection", default=settings.COLLECTION_NAME, help="ChromaDB collection name"
+)
 @click.option("--batch-size", "-b", default=32, help="Embedding batch size")
 @click.option("--device", default="cpu", help="Device: cpu or cuda")
 @click.option("--id-prefix", default="verbete", help="Record id prefix")
@@ -79,7 +82,9 @@ def embed(
 
 
 @cli.command()
-@click.option("--collection", default="amazon_reviews", help="ChromaDB collection name")
+@click.option(
+    "--collection", default=settings.COLLECTION_NAME, help="ChromaDB collection name"
+)
 @click.option("--umap-neighbors", default=15, help="UMAP n_neighbors")
 @click.option("--umap-min-dist", default=0.1, help="UMAP min_dist")
 @click.option("--hdbscan-min-cluster", default=15, help="HDBSCAN min_cluster_size")
@@ -104,7 +109,9 @@ def cluster(
 
 
 @cli.command()
-@click.option("--collection", default="amazon_reviews", help="ChromaDB collection name")
+@click.option(
+    "--collection", default=settings.COLLECTION_NAME, help="ChromaDB collection name"
+)
 @click.option("--contamination", default=0.05, help="Anomaly contamination ratio")
 def quality(
     collection: str,
@@ -122,7 +129,9 @@ def quality(
 @cli.command()
 @click.argument("query")
 @click.option("--k", "-k", default=10, help="Number of results")
-@click.option("--collection", default="amazon_reviews", help="ChromaDB collection name")
+@click.option(
+    "--collection", default=settings.COLLECTION_NAME, help="ChromaDB collection name"
+)
 @click.option("--tipo", default="", help="Filter by tipo (sumula/oj/precedente)")
 @click.option(
     "--orgao", default="", help="Filter by orgão (TST/SBDI-1/SBDI-2/SDC/TP-OE)"
@@ -163,7 +172,9 @@ def search(
 
 
 @cli.command()
-@click.option("--collection", default="amazon_reviews", help="ChromaDB collection name")
+@click.option(
+    "--collection", default=settings.COLLECTION_NAME, help="ChromaDB collection name"
+)
 @click.option("--top-terms", default=5, help="Top terms per cluster")
 def clusters(
     collection: str,
@@ -182,7 +193,9 @@ def clusters(
 
 
 @cli.command()
-@click.option("--collection", default="amazon_reviews", help="ChromaDB collection name")
+@click.option(
+    "--collection", default=settings.COLLECTION_NAME, help="ChromaDB collection name"
+)
 @click.option("--limit", "-l", default=20, help="Number of anomalies to show")
 @click.option("--min-score", default=0.0, help="Minimum anomaly score")
 def anomalies(
@@ -206,7 +219,9 @@ def anomalies(
 
 
 @cli.command()
-@click.option("--collection", default="amazon_reviews", help="ChromaDB collection name")
+@click.option(
+    "--collection", default=settings.COLLECTION_NAME, help="ChromaDB collection name"
+)
 def stats(
     collection: str,
 ) -> None:
@@ -228,7 +243,9 @@ def stats(
 
 
 @cli.command()
-@click.option("--collection", default="amazon_reviews", help="ChromaDB collection name")
+@click.option(
+    "--collection", default=settings.COLLECTION_NAME, help="ChromaDB collection name"
+)
 @click.option(
     "--output",
     "-o",
@@ -252,9 +269,11 @@ def export(
     "--input",
     "-i",
     default="data/raw/livrointernet12pdf.pdf",
-    help="Path to the TST Livro de Jurisprudência PDF",
+    help="Path to the TST Livro de Jurisprudência PDF or a plain-text file",
 )
-@click.option("--collection", default="amazon_reviews", help="ChromaDB collection name")
+@click.option(
+    "--collection", default=settings.COLLECTION_NAME, help="ChromaDB collection name"
+)
 @click.option("--min-len", default=20, help="Minimum verbete text length")
 @click.option("--skip-ingest", is_flag=True, help="Skip ingestion step")
 @click.option("--skip-embed", is_flag=True, help="Skip embedding step")

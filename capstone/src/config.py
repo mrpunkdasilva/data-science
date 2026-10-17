@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     VERBETE_RUIDO: int = 30
 
     # ChromaDB
-    COLLECTION_NAME: str = "amazon_reviews"
+    COLLECTION_NAME: str = "tst_verbetes"
     HNSW_SPACE: str = "cosine"
     HNSW_M: int = 32
     HNSW_EF_CONSTRUCTION: int = 200

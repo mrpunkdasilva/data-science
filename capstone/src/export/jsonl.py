@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from store.client import get_chroma_client, get_collection
+from config import settings
 
 
 def _build_record(
@@ -36,7 +37,7 @@ def _build_record(
 
 
 def export_jsonl(
-    collection_name: str = "amazon_reviews",
+    collection_name: str = settings.COLLECTION_NAME,
     output_path: str = "data/final/tst.jsonl",
 ) -> int:
     """

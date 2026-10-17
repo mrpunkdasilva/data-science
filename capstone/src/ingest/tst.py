@@ -1,8 +1,11 @@
-"""Ingestion of the TST Livro de Jurisprudência PDF.
+"""Ingestion of the TST Livro de Jurisprudência.
 
 Parses Súmulas, Orientação Jurisprudencial (OJ) and Precedentes Normativos (PN)
 verbete by verbete, keeping only the current redaction for each verbete (the
 book also reproduces the full historical sequence of each verbete).
+
+Both the official PDF and plain-text (``.txt``) sources are supported: the
+extension selects the reader, after which segmentation and labelling are shared.
 """
 
 # mypy: ignore-errors
@@ -92,6 +95,22 @@ def _iter_clean_lines(pdf) -> list[str]:
         if re.search(BANNER_INDEX, text):
             break
     return _join_lines(lines)
+
+
+def _clean_lines_from_text(text: str) -> list[str]:
+    """Turn raw plain-text content into cleaned line strings."""
+    return _join_lines(text.splitlines())
+
+
+def _read_pdf_lines(path: Path) -> list[str]:
+    """Read cleaned lines from a PDF file."""
+    with pdfplumber.open(str(path)) as pdf:
+        return _iter_clean_lines(pdf)
+
+
+def _read_text_lines(path: Path) -> list[str]:
+    """Read cleaned lines from a plain-text file."""
+    return _clean_lines_from_text(path.read_text(encoding="utf-8"))
 
 
 def _segment_verbetes(lines: list[str]) -> list[dict]:
@@ -204,26 +223,36 @@ def _label_verbetes(verbetes: list[dict]) -> None:
 
 
 def load_verbetes(
-    pdf_path: str | Path | None = None,
+    source_path: str | Path | None = None,
     min_text_len: int | None = None,
 ) -> pd.DataFrame:
     """
-    Load verbetes (Súmulas, OJs and Precedentes Normativos) from the TST PDF.
+    Load verbetes (Súmulas, OJs and Precedentes Normativos) from a source file.
+
+    Supports both the official PDF (``.pdf``) and plain-text (``.txt``) sources.
+    The file extension selects the reader; segmentation and labelling are shared.
 
     Args:
-        pdf_path: Path to the Livro de Jurisprudência PDF
+        source_path: Path to the Livro de Jurisprudência PDF or a plain-text file
         min_text_len: Drop verbetes with body shorter than this
 
     Returns:
         DataFrame with one verbete per row
     """
-    pdf_path = Path(pdf_path or settings.TST_PDF_PATH)
+    path = Path(source_path or settings.TST_PDF_PATH)
     min_len = min_text_len or settings.VERBETE_MIN_TEXT
 
-    with pdfplumber.open(str(pdf_path)) as pdf:
-        lines = _iter_clean_lines(pdf)
+    suffix = path.suffix.lower()
+    if suffix == ".pdf":
+        lines = _read_pdf_lines(path)
+    elif suffix in {".txt", ".text"}:
+        lines = _read_text_lines(path)
+    else:
+        raise ValueError(
+            f"Unsupported source format '{suffix}'. Use a .pdf or .txt file."
+        )
 
-    console_log(f"Extracted {len(lines)} cleaned lines from {pdf_path.name}")
+    console_log(f"Extracted {len(lines)} cleaned lines from {path.name}")
     verbetes = _segment_verbetes(lines)
     console_log(f"Segmented {len(verbetes)} verbetes")
     _label_verbetes(verbetes)
@@ -253,7 +282,7 @@ def load_verbetes(
                 "tema": v["tema"].strip(),
                 "text": text,
                 "text_len": len(text),
-                "source": pdf_path.name,
+                "source": path.name,
                 "quality_label": v.get("quality_label", "completo"),
             }
         )
