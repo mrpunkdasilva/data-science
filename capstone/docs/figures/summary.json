@@ -1,0 +1,188 @@
+{
+  "total_documents": 1058,
+  "heuristic_quality": {
+    "completo": 625,
+    "cancelado": 405,
+    "curto": 26,
+    "duplicado": 2
+  },
+  "predicted_quality": {
+    "completo": 694,
+    "curto": 27,
+    "cancelado": 334,
+    "duplicado": 3
+  },
+  "tipos": {
+    "sumula": 235,
+    "precedente": 120,
+    "oj": 703
+  },
+  "text_len": {
+    "min": 22,
+    "median": 315,
+    "max": 4204
+  },
+  "n_clusters": 2,
+  "noise_count": 14,
+  "clusters": [
+    {
+      "cluster_id": 1,
+      "size": 1009,
+      "top_terms": [
+        "art.",
+        "res.",
+        "para",
+        "decorrência",
+        "súmula",
+        "25.04.2005",
+        "divulgado",
+        "129/2005,"
+      ]
+    },
+    {
+      "cluster_id": 0,
+      "size": 35,
+      "top_terms": [
+        "concede",
+        "homologação",
+        "res.",
+        "sessão",
+        "81/1998,",
+        "20.08.1998)",
+        "15.10.1998)",
+        "86/1998,"
+      ]
+    }
+  ],
+  "anomaly_count_gt_0_7": 47,
+  "anomaly_mean": 0.382,
+  "top_anomalies": [
+    {
+      "doc_id": "precedente_106",
+      "tipo": "precedente",
+      "orgao": "SDC",
+      "quality_label": "completo",
+      "anomaly_score": 1.0,
+      "text": "Os empregadores que se dedicarem à pecuária leiteira fornecerão, diariamente, 1 (um) litro de leite aos trabalhadores que exerçam atividades insalubres."
+    },
+    {
+      "doc_id": "precedente_63",
+      "tipo": "precedente",
+      "orgao": "SDC",
+      "quality_label": "completo",
+      "anomaly_score": 0.9485,
+      "text": "Quando da colheita, o café será entregue na lavoura ou no monte, fornecendo-se ao trabalhador uma ficha com o valor da respectiva produção."
+    },
+    {
+      "doc_id": "precedente_107",
+      "tipo": "precedente",
+      "orgao": "SDC",
+      "quality_label": "completo",
+      "anomaly_score": 0.9357,
+      "text": "Nos locais de trabalho no campo serão mantidos pelo empregador medicamentos e materiais de primeiros socorros."
+    },
+    {
+      "doc_id": "precedente_60",
+      "tipo": "precedente",
+      "orgao": "SDC",
+      "quality_label": "completo",
+      "anomaly_score": 0.8957,
+      "text": "O latão de café terá capacidade de 60 litros e será padronizado de acordo com as normas do INPM."
+    },
+    {
+      "doc_id": "oj_sbdi-1_252",
+      "tipo": "oj",
+      "orgao": "SBDI-1",
+      "quality_label": "cancelado",
+      "anomaly_score": 0.8642,
+      "text": "DJ 20, 22 e 25.04.2005 O conceito de \"mesma localidade\" de que trata o art. 461 da CLT refere-se, em princípio, ao mesmo município, ou a municípios distintos que, comprovadamente, pertençam à mesma região metropolitana."
+    },
+    {
+      "doc_id": "precedente_115",
+      "tipo": "precedente",
+      "orgao": "SDC",
+      "quality_label": "completo",
+      "anomaly_score": 0.8518,
+      "text": "Determina-se o fornecimento gratuito de uniformes, desde que exigido seu uso pelo empregador."
+    },
+    {
+      "doc_id": "sumula_83",
+      "tipo": "sumula",
+      "orgao": "TST",
+      "quality_label": "cancelado",
+      "anomaly_score": 0.8294,
+      "text": "II – IDBS II - Se a decisão rescindenda é posterior à Súmula nº 315 do TST (Res. 07, DJ 22.09.93), inaplicável a Súmula nº 83 do TST."
+    },
+    {
+      "doc_id": "precedente_22",
+      "tipo": "precedente",
+      "orgao": "SDC",
+      "quality_label": "completo",
+      "anomaly_score": 0.8238,
+      "text": "Determina-se a instalação de local destinado à guarda de crianças em idade de amamentação, quando existentes na empresa mais de 30 (trinta) mulheres maiores de 16 (dezesseis) anos, facultado o convênio com creches."
+    },
+    {
+      "doc_id": "precedente_62",
+      "tipo": "precedente",
+      "orgao": "SDC",
+      "quality_label": "completo",
+      "anomaly_score": 0.8218,
+      "text": "Os empregadores são responsáveis pelos reparos nas residências que cedam aos empregados rurais, desde que os danos não decorram de culpa destes."
+    },
+    {
+      "doc_id": "precedente_65",
+      "tipo": "precedente",
+      "orgao": "SDC",
+      "quality_label": "curto",
+      "anomaly_score": 0.8159,
+      "text": "O pagamento do salário será efetuado em moeda corrente e no horário de serviço, para isso permitido o seu prolongamento até duas horas após o término da jornada de trabalho."
+    }
+  ],
+  "classifier": {
+    "accuracy": 0.9056603773584906,
+    "f1_macro": 0.7078696741854636,
+    "f1_weighted": 0.8964221875443326,
+    "n_train": 846,
+    "n_test": 212,
+    "report": {
+      "cancelado": {
+        "precision": 0.9855072463768116,
+        "recall": 0.8395061728395061,
+        "f1-score": 0.9066666666666666,
+        "support": 81.0
+      },
+      "completo": {
+        "precision": 0.8723404255319149,
+        "recall": 0.984,
+        "f1-score": 0.924812030075188,
+        "support": 125.0
+      },
+      "curto": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 5.0
+      },
+      "duplicado": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 1.0
+      },
+      "accuracy": 0.9056603773584906,
+      "macro avg": {
+        "precision": 0.7144619179771816,
+        "recall": 0.7058765432098766,
+        "f1-score": 0.7078696741854636,
+        "support": 212.0
+      },
+      "weighted avg": {
+        "precision": 0.8956067931509958,
+        "recall": 0.9056603773584906,
+        "f1-score": 0.8964221875443326,
+        "support": 212.0
+      }
+    },
+    "report_text": "              precision    recall  f1-score   support\n\n   cancelado       0.99      0.84      0.91        81\n    completo       0.87      0.98      0.92       125\n       curto       0.00      0.00      0.00         5\n   duplicado       1.00      1.00      1.00         1\n\n    accuracy                           0.91       212\n   macro avg       0.71      0.71      0.71       212\nweighted avg       0.90      0.91      0.90       212\n"
+  }
+}
