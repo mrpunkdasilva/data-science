@@ -213,7 +213,7 @@ def anomalies(
         )
         console.print(f"  Tema: {r['tema']}")
         console.print(
-            f"  Tipo: {r['tipo']} | Orgão: {r['orgao']} | Nº: {r['codigo']} | Quality: {r['quality_label']}"
+            f"  Tipo: {r['tipo']} | Orgão: {r['orgao']} | Nº: {r.get('codigo', '')} | Quality: {r['quality_label']}"
         )
         console.print(f"  {r['text'][:300]}...")
 

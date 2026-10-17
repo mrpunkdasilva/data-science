@@ -369,5 +369,56 @@ def test_search_reviews_filters():
     assert combined[0]["quality_label"] == "completo"
 
 
+def test_top_terms_filters_noise():
+    """Top terms drop stopwords, punctuation and standalone numbers/dates."""
+    from lib.text import top_terms
+
+    texts = [
+        "para a homologação de sessão res. 20.08.1998) (cancelado",
+        "homologação de sessão com sessão",
+    ]
+    result = top_terms(texts, 5)
+    assert "para" not in result
+    assert "com" not in result
+    assert "res" not in result
+    assert all(not any(ch.isdigit() for ch in w) for w in result)
+    assert result[0] in {"homologação", "sessão"}
+
+
+def test_get_anomalies_includes_codigo():
+    """Anomaly records carry the 'codigo' field the CLI prints."""
+    from typing import Any
+    from search.engine import get_anomalies
+    from store.client import get_chroma_client
+
+    client: Any = get_chroma_client()
+    name = "test_anomalies_codigo"
+    if [c for c in client.list_collections() if c.name == name]:
+        client.delete_collection(name)
+    collection = client.create_collection(name=name)
+    collection.add(
+        ids=["v0"],
+        embeddings=[[0.0] * 384],
+        documents=["Texto de teste suficientemente longo."],
+        metadatas=[
+            {
+                "doc_id": "sumula_1",
+                "tipo": "sumula",
+                "orgao": "TST",
+                "codigo": 1,
+                "tema": "Tema",
+                "quality_label": "completo",
+                "cluster_id": 0,
+                "anomaly_score": 0.9,
+            }
+        ],
+    )
+    results = get_anomalies(collection_name=name, limit=5)
+    client.delete_collection(name)
+
+    assert results
+    assert results[0]["codigo"] == 1
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

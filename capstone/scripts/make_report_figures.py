@@ -111,10 +111,11 @@ def classifier_metrics(heuristic: pd.DataFrame) -> dict:
 
 
 def cluster_top_terms(enriched: pd.DataFrame, cluster_id: int, n: int = 8) -> list[str]:
-    """Most frequent words inside a cluster."""
+    """Most frequent meaningful words inside a cluster."""
+    from lib.text import top_terms as compute_top_terms
+
     texts = enriched.loc[enriched["cluster_id"] == cluster_id, "text"].astype(str)
-    words = [w for text in texts for w in text.lower().split() if len(w) > 3]
-    return [w for w, _ in Counter(words).most_common(n)]
+    return compute_top_terms(texts.tolist(), n)
 
 
 def figure_quality_labels(heuristic: pd.DataFrame, enriched: pd.DataFrame) -> None:

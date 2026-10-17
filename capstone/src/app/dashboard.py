@@ -15,7 +15,6 @@ The dashboard reads the enriched dataset produced by the pipeline export step
 # mypy: ignore-errors
 
 import json
-from collections import Counter
 from pathlib import Path
 
 import pandas as pd
@@ -69,10 +68,11 @@ def load_data() -> pd.DataFrame | None:
 
 
 def top_terms(frame: pd.DataFrame, cluster_id: int, n: int = 8) -> list[str]:
-    """Return the most frequent words inside a cluster (simple descriptor)."""
+    """Return the most frequent meaningful words inside a cluster (descriptor)."""
+    from lib.text import top_terms as compute_top_terms
+
     texts = frame.loc[frame["cluster_id"] == cluster_id, "text"].astype(str)
-    words = [w for text in texts for w in text.lower().split() if len(w) > 3]
-    return [word for word, _ in Counter(words).most_common(n)]
+    return compute_top_terms(texts.tolist(), n)
 
 
 @st.cache_resource(show_spinner=False)

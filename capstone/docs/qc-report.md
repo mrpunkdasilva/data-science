@@ -164,8 +164,8 @@ The corpus splits into two dense clusters plus a small noise band:
 
 | Cluster | Size | Top terms |
 |---------|------|-----------|
-| 1 | 1009 | art., res., para, decorrência, súmula |
-| 0 | 35 | concede, homologação, res., sessão |
+| 1 | 1009 | trabalho, súmula, decorrência, cancelada, empregado |
+| 0 | 35 | concede, homologação, sessão, empregado |
 | noise | 14 | - |
 
 Cluster 0 captures the historical rural-work precedentes, which is consistent

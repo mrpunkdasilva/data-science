@@ -8,6 +8,7 @@ from sentence_transformers import SentenceTransformer
 from config import settings
 from store.client import get_chroma_client, get_collection
 from embed.model import get_model
+from lib.text import top_terms as compute_top_terms
 from chromadb.api.models.Collection import Collection
 from chromadb.types import Where
 
@@ -119,7 +120,9 @@ def list_clusters(
                 "qualities": [],
                 "tipos": [],
             }
-        clusters[cid]["texts"].append(doc)
+        # Use the body text from metadata so cluster descriptors match the
+        # dashboard and the report (the Chroma document is tema + " " + text).
+        clusters[cid]["texts"].append(meta.get("text", doc))
         clusters[cid]["qualities"].append(meta.get("quality_label", "completo"))
         clusters[cid]["tipos"].append(meta.get("tipo", ""))
 
@@ -132,10 +135,8 @@ def list_clusters(
         dominant_quality = max(set(data["qualities"]), key=data["qualities"].count)
         tipo_counts = Counter(data["tipos"]).most_common(3)
 
-        # Simple top terms (most frequent words in cluster)
-        all_text = " ".join(data["texts"]).lower()
-        words = [w for w in all_text.split() if len(w) > 3]
-        top_words = [w for w, _ in Counter(words).most_common(top_terms)]
+        # Meaningful top terms, shared with the dashboard and report scripts
+        top_words = compute_top_terms(data["texts"], top_terms)
 
         cluster_info.append(
             {
@@ -183,6 +184,7 @@ def get_anomalies(
                     "text": doc,
                     "tipo": meta.get("tipo", ""),
                     "orgao": meta.get("orgao", ""),
+                    "codigo": meta.get("codigo", ""),
                     "quality_label": meta.get("quality_label", "completo"),
                     "cluster_id": meta.get("cluster_id", -1),
                     "anomaly_score": score,
