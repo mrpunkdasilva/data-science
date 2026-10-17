@@ -319,7 +319,7 @@ It is **unsupervised**: nobody told it what an "anomaly" looks like.
 
 ## Engineering quality
 
-- **Tests:** 14 pytest cases, including an **offline end-to-end** pipeline run.
+- **Tests:** 17 pytest cases, including an **offline end-to-end** pipeline run.
 - **CI:** GitHub Actions (lint + strict typing) and GitLab CI (pipeline + tests).
 - **Compliance:** `black` and `mypy` (strict) across the repository.
 - **Docker:** `docker compose up --build` builds the pipeline, pre-loads the

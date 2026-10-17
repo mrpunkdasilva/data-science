@@ -437,7 +437,7 @@ and the grey noise.*
 ### Slide 23 - Engineering quality
 
 > "Good results mean little if the code is not trustworthy, so let me show the
-> engineering practices. There are fifteen automated tests, including a full
+> engineering practices. There are seventeen automated tests, including a full
 > offline end-to-end run of the pipeline, so the whole thing is verified without
 > touching the network. Continuous integration runs on both GitHub and GitLab:
 > formatting and strict type checking in one, the full pipeline and tests in the
@@ -638,22 +638,210 @@ Say these in your own words if asked:
 
 ## Likely questions and answers
 
-- **Why a multilingual model?** Portuguese legal text works without fine-tuning,
-  and it runs on CPU. A legal-domain model is future work.
-- **Why UMAP + HDBSCAN instead of PCA + k-means?** UMAP keeps local structure
-  better for visualisation, and HDBSCAN needs no preset `k` and can label
-  outliers as noise.
-- **Is the classifier trained on embeddings?** No - it uses **TF-IDF + logistic
-  regression** on the text, with **balanced class weights**; the embeddings are a
-  separate component. (This is a good, honest detail to know.)
-- **How are the quality labels validated?** They are **heuristic** (rule-based).
-  The classifier learns to reproduce them, and I report per-class metrics
-  including the failures.
-- **What does "anomaly" mean here?** A verbete whose embedding is **unusual**
-  relative to the rest - often rare historical precedentes. It is a **review
-  cue**, not a judgment.
+Grouped by area, so you can jump to the topic he is probing. Where he asks "where
+is the code?" the file and function are given, so you can open it immediately.
+
+### Overview, domain and requirements
+
+- **What is the one-line goal?** Turn the TST book PDF into a searchable,
+  clustered, quality-checked knowledge base.
+- **Who is the user?** Someone who needs to find related labour rulings fast
+  (lawyer, researcher, citizen).
+- **Why is the data usable?** Official public act, so there is no copyright issue.
+- **What are the three document types?** Súmulas (TST), OJs
+  (SBDI-1/SBDI-2/SDC/TP-OE/SBDI-1T), Precedentes Normativos (SDC).
+- **What is a verbete?** One numbered statement: type, orgão, number, theme, body.
+- **How many documents?** 1058 verbetes from a 579-page PDF.
+- **Where is the requirement mapping?** The four parts of the brief map to ingest,
+  ChromaDB, Streamlit and quality control.
 - **Is this legal advice?** No - it is an educational data-engineering project.
-- **How reproducible is it?** `capstone pipeline` plus `make docs` regenerate
-  every artifact; CI runs offline on the fixture.
+
+### Ingestion (code: `src/ingest/tst.py`, command `cli.main.ingest`)
+
+- **How is a heading detected?** Regexes `HEADING_SUMULA`, `HEADING_OJ`,
+  `HEADING_PN`.
+- **How is page furniture dropped?** `FURNITURE` and `BANNER_*` regexes.
+- **How is only the current wording kept?** `HISTORY_BOUNDARY` cuts at `Histórico:`
+  and `Redação ...`.
+- **Where does parsing stop?** At `ÍNDICE REMISSIVO` (`BANNER_INDEX`).
+- **How are hyphen splits fixed?** `_join_lines` merges `pe-` + `soal`.
+- **How are orgãos normalized?** `ORG_MAP` maps `SDI1 -> SBDI-1`, and so on.
+- **How are historical repeats skipped?** `_segment_verbetes` skips the same
+  `tipo` + `codigo`.
+- **How are heuristic labels assigned?** `_label_verbetes`: cancellation keywords,
+  duplicates, then length.
+- **What are the length thresholds?** `VERBETE_RUIDO=30`, `VERBETE_CURTO=120`.
+- **PDF vs txt?** Same pipeline; `load_verbetes` picks `_read_pdf_lines` or
+  `_read_text_lines` by extension.
+- **How is `doc_id` built?** `{tipo}_{codigo}` for TST/SDC, else
+  `{tipo}_{orgao}_{codigo}`.
+- **What was hardest here?** Making a dense 579-page PDF segment cleanly (repeated
+  headers, rotated text).
+
+### Embeddings (code: `src/embed/model.py::get_model`)
+
+- **Which model?** `paraphrase-multilingual-MiniLM-L12-v2` (Sentence-Transformers).
+- **Why this model?** Multilingual, 384-D, small and fast on CPU.
+- **Why a multilingual model?** Portuguese legal text works without fine-tuning and
+  runs on CPU. A legal-domain model is future work.
+- **What text is embedded?** `tema` + `" "` + `text` (in `embed_reviews`).
+- **Why include the theme?** The short theme adds a strong topical signal.
+- **Why normalize vectors?** So cosine similarity becomes a fast dot product.
+- **What is an embedding, really?** 384 learned numbers that encode meaning.
+- **Batch size and threads?** 32 texts per batch; `torch.set_num_threads(8)`.
+- **Is the model trained by us?** No - transfer learning from a general pre-trained
+  model.
+- **Why is 1058 documents enough?** We reuse pre-trained knowledge; we do not train
+  the model.
+- **Can we fine-tune?** Future work; it needs labelled data.
+
+### ChromaDB and vector search (code: `src/store/client.py`)
+
+- **Where is the client?** `get_chroma_client` (persistent, on disk).
+- **Which index and space?** HNSW graph, cosine.
+- **HNSW parameters?** `HNSW_M=32`, `HNSW_EF_CONSTRUCTION=200`.
+- **What is HNSW?** Hierarchical Navigable Small World: an approximate
+  nearest-neighbour graph.
+- **Is it exact?** No - approximate, trading a little recall for a lot of speed.
+- **Which metadata is stored?** `tipo`, `orgao`, `codigo`, `tema`, `quality_label`,
+  `cluster_id`, `anomaly_score`, `umap_x/y`.
+- **How is filtering done?** A `where` clause in `search_reviews`.
+- **Why `$and`?** Chroma needs `{"$and": [...]}` when combining more than one
+  condition.
+- **How to rebuild?** Delete the collection, then `capstone pipeline`.
+
+### UMAP (code: `src/cluster/pipeline.py::run_clustering`)
+
+- **Why reduce dimensions?** We cannot plot or reason over 384-D directly.
+- **Why UMAP?** Non-linear; keeps local and some global structure.
+- **Why not PCA or t-SNE?** PCA is linear; t-SNE keeps only local structure and is
+  slower.
+- **What is `n_neighbors=15`?** The local vs global balance.
+- **What is `min_dist=0.1`?** How tightly points may pack.
+- **Why cosine metric?** It matches the embedding space.
+- **Why `random_state=42`?** Reproducibility.
+- **Are the axes meaningful?** No; UMAP-1 and UMAP-2 have no units.
+- **Is the projection lossy?** Yes; distances are approximate, not measurements.
+
+### HDBSCAN (code: same file, right after UMAP)
+
+- **Why HDBSCAN over k-means?** No preset `k`, handles uneven densities, and can
+  mark noise.
+- **What is `min_cluster_size=15`?** The smallest group accepted as a cluster.
+- **What is `min_samples=5`?** How conservative the density estimate is.
+- **What does `-1` mean?** Noise: too sparse to belong to a cluster.
+- **How many clusters?** Two dense clusters plus 14 noise points.
+- **What are they?** Cluster 1 (1009, general body) and cluster 0 (35, historical
+  rural-work precedentes).
+- **Is a cluster a legal category?** No, only a thematic grouping.
+
+### Quality labels and classifier (code: `src/quality/classifier.py`)
+
+- **What are the labels?** completo, cancelado, curto, duplicado, ruido.
+- **Where do they come from first?** Rules in `_label_verbetes` (weak supervision).
+- **How are the quality labels validated?** They are heuristic (rule-based). The
+  classifier learns to reproduce them, and I report per-class metrics including the
+  failures.
+- **Why a classifier at all?** The rules are rigid; the classifier generalises them.
+- **Is the classifier trained on embeddings?** No - it uses TF-IDF + logistic
+  regression on the text, with balanced class weights. The embeddings are a
+  separate component.
+- **Why TF-IDF + logistic regression?** Simple, fast, interpretable, and it works
+  with few labels.
+- **Why n-grams 1-2 and 5000 features?** Capture short phrases within a bounded
+  size.
+- **Why a 20% test split?** A held-out evaluation, seed 42.
+- **What if a class has one sample?** Stratify is disabled, and that class cannot be
+  learned.
+- **Results?** Accuracy 0.91, weighted-F1 0.90; `curto` and `duplicado` fail (n=5
+  and n=1).
+- **Where is the model saved?** `models/quality_classifier.joblib`.
+- **Are these legal labels?** No - heuristic and model predictions.
+
+### Anomaly detection (code: `src/quality/anomaly.py::run_anomaly_detection`)
+
+- **What does "anomaly" mean here?** A verbete whose embedding is unusual relative
+  to the rest - often rare historical precedentes. A review cue, not a judgment.
+- **Why IsolationForest?** Unsupervised, and it scales well.
+- **How does it work?** Random splits isolate anomalies in fewer cuts, giving
+  higher scores.
+- **On what data?** The 384-D embeddings, so anomalies are semantic.
+- **What is `contamination=0.05`?** The expected outlier rate (5%).
+- **How are scores normalised?** Min-max to 0-1; higher means more anomalous.
+- **Why is the score negated?** `decision_function` gives lower values for
+  outliers.
+- **Is 0.7 the right cutoff?** It is a display convention; the ranking matters more
+  than the line.
+- **How many flagged?** 47 verbetes (4.4%).
+- **Top hits?** `precedente_106`, `precedente_63`, `precedente_107`.
+
+### Search, export and dashboard (code: `src/search/engine.py`, `src/export/jsonl.py`, `src/app/dashboard.py`)
+
+- **How does search work?** Embed the query, then ask ChromaDB for nearest
+  neighbours.
+- **How many results?** `min(k, MAX_SEARCH_K=50)`.
+- **What is the score?** `1 - distance` (cosine similarity).
+- **What is `get_stats` for?** Totals by type, orgão, quality, clusters, anomalies.
+- **How are top terms computed?** `src/lib/text.py::top_terms`, which drops
+  stopwords, punctuation and numbers.
+- **What does export write?** `export_jsonl` writes one JSON object per verbete to
+  JSONL.
+- **Why does the dashboard read the JSONL, not the database?** A reproducible
+  snapshot that also survives an empty database.
+- **What if ChromaDB is missing?** The dashboard falls back to `lexical_search`.
+- **How does the dashboard start?** `src/app/main.py` calls `streamlit run`.
+
+### Engineering, tests and Docker
+
+- **Where are the tests?** `tests/test_pipeline.py` (17 cases).
+- **What does the end-to-end test do?** It runs the whole pipeline on an offline
+  fixture (`tests/fixtures/tst-sample.pdf`, 22 verbetes).
+- **What CI runs?** GitHub Actions (lint + strict typing) and GitLab CI (pipeline +
+  tests).
+- **Is Docker used in the demo?** No - the demo runs natively; Docker remains
+  available.
+- **How to reproduce?** `make test lint docs`, then `make dashboard`.
+
+### Reproducibility and data
+
+- **How reproducible is it?** `capstone pipeline` plus `make docs` regenerate every
+  artifact; all seeds are fixed (`random_state=42`) and CI runs offline on the
+  fixture.
+- **Where is configuration?** `src/config.py`, overridable by `.env`.
+- **What is committed vs generated?** Code and docs are committed; data, models and
+  `chroma_db` are generated.
+- **How big is the corpus?** 1058 verbetes; text length from 22 to 4204 characters.
+
+### Hard and curveball questions
+
 - **What was hardest?** Aligning dependencies (the Streamlit/Pillow/pdfplumber
   conflict) and making a large legal PDF segment cleanly.
+- **What if we change the embedding model?** Re-embed everything; the dimension may
+  change.
+- **What if the corpus grows to a million documents?** Keep HNSW, batch ingestion,
+  and consider sharding.
+- **Why not use an LLM?** Cost, reproducibility and the offline constraint; a
+  possible future step.
+- **How do you know the clusters are correct?** There is no ground truth; they are
+  qualitative and plausible.
+- **Could the classifier be biased?** Yes - it inherits the rules' biases, which is
+  why the labels are marked weak.
+- **How is duplicate detection done?** Normalised exact-text equality, not fuzzy
+  matching.
+- **Is it production ready?** No - an educational capstone.
+- **What would you do with more time?** A labelled retrieval benchmark and active
+  learning.
+
+### Where to stop and admit limits
+
+Honest answers are stronger than guessing:
+
+- **Can you prove retrieval quality?** Not yet; there is no labelled relevance set.
+- **Is the quality label legally correct?** I cannot claim that; it is heuristic.
+- **Why exactly two clusters?** That is what these density parameters found, not
+  the only valid answer.
+- **Would a legal expert agree with the top terms?** They are statistics, not legal
+  analysis.
+- **Does UMAP preserve true distances?** No, it is a lossy projection.
+- **Is `curto` well modelled?** No, five examples are too few.
+- **Can it replace a jurist?** No, it is a navigation aid.
