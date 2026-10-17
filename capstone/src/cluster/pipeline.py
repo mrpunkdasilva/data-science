@@ -36,7 +36,6 @@ def run_clustering(
         console_log("Collection is empty!")
         return
 
-    # Fetch all embeddings in batches
     all_embeddings: list[list[float]] = []
     all_ids: list[str] = []
     batch_size = 1000
@@ -52,7 +51,7 @@ def run_clustering(
     embeddings = np.array(all_embeddings)
     console_log(f"Running UMAP on {len(embeddings)} embeddings...")
 
-    # UMAP reduction
+    # Reduce to 2-D with cosine metric, matching the embedding space
     reducer = umap.UMAP(
         n_neighbors=umap_n_neighbors,
         min_dist=umap_min_dist,
@@ -64,6 +63,7 @@ def run_clustering(
     umap_embeddings = reducer.fit_transform(embeddings)
 
     console_log("Running HDBSCAN clustering...")
+    # Density-based clustering; sparse points get label -1 (noise)
     clusterer = hdbscan.HDBSCAN(
         min_cluster_size=hdbscan_min_cluster_size,
         min_samples=hdbscan_min_samples,
@@ -73,7 +73,6 @@ def run_clustering(
     )
     cluster_labels = clusterer.fit_predict(umap_embeddings)
 
-    # Update ChromaDB with cluster info in batches
     console_log("Updating ChromaDB with cluster labels and UMAP coordinates...")
     metadatas: list[dict[str, float | int]] = []
     for i, (uid, label) in enumerate(zip(all_ids, cluster_labels)):

@@ -69,6 +69,7 @@ def embed_reviews(
     console_log(f"Generating embeddings for {len(df)} verbetes...")
 
     model = get_model(device)
+    # Embed theme plus body: the short theme carries the topic signal
     texts = (df["tema"].fillna("") + " " + df["text"].fillna("")).tolist()
 
     embeddings = embed_texts(texts, model=model, batch_size=batch_size)

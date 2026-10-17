@@ -71,7 +71,6 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-# Ensure directories exist
 for path in [
     settings.RAW_DIR,
     settings.PROCESSED_DIR,

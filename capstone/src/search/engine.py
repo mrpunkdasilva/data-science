@@ -110,7 +110,6 @@ def list_clusters(
     metadatas = result["metadatas"] or []
     documents = result["documents"] or []
 
-    # Group by cluster_id
     clusters: dict[int, dict[str, list]] = {}
     for meta, doc in zip(metadatas, documents):
         cid = int(meta.get("cluster_id", -1))
@@ -126,7 +125,6 @@ def list_clusters(
         clusters[cid]["qualities"].append(meta.get("quality_label", "completo"))
         clusters[cid]["tipos"].append(meta.get("tipo", ""))
 
-    # Compute stats
     cluster_info: list[dict] = []
     for cid, data in sorted(clusters.items()):
         if cid == -1:
@@ -135,7 +133,6 @@ def list_clusters(
         dominant_quality = max(set(data["qualities"]), key=data["qualities"].count)
         tipo_counts = Counter(data["tipos"]).most_common(3)
 
-        # Meaningful top terms, shared with the dashboard and report scripts
         top_words = compute_top_terms(data["texts"], top_terms)
 
         cluster_info.append(

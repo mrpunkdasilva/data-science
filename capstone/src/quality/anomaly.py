@@ -41,14 +41,11 @@ def run_anomaly_detection(
 
     # Get anomaly scores (negative = more anomalous)
     scores = -iso_forest.decision_function(embeddings)
-    # Normalize to 0-1 range
     scores = (scores - scores.min()) / (scores.max() - scores.min() + 1e-8)
 
-    # Save model
     settings.MODELS_DIR.mkdir(parents=True, exist_ok=True)
     joblib.dump(iso_forest, settings.MODELS_DIR / "anomaly_detector.joblib")
 
-    # Update ChromaDB in batches
     console_log("Updating ChromaDB with anomaly scores...")
     metadatas = [{"anomaly_score": float(s)} for s in scores]
 

@@ -18,6 +18,7 @@ import pandas as pd
 import pdfplumber
 from config import settings
 
+# Heading patterns, one per verbete type
 HEADING_SUMULA = re.compile(
     r"^(?:S[úu]mula[\sº.]+|[Nn][º°o.:]?)\s*(\d{1,4})(?:\s+(.*))?$", re.IGNORECASE
 )
@@ -32,6 +33,7 @@ BANNER_OJ = re.compile(r"^ORIENTA[ÇC][ÕO]ES\s+JURISPRUDENCIAIS")
 BANNER_PN = re.compile(r"^PRECEDENTES\s+NORMATIVOS")
 BANNER_INDEX = re.compile(r"^[IÍ]NDICE\s+REMISSIVO\s*$", re.IGNORECASE)
 
+# Running headers, page numbers and their mirrored (rotated) copies
 FURNITURE = re.compile(
     r"^(?:S[úu]mulas?|Orienta[çc][ãõ]es?\s+Jurisprudenciais|"
     r"Orienta[çc][ãõ]o\s+Jurisprudencial(?: da .*)?|"
@@ -41,6 +43,7 @@ FURNITURE = re.compile(
     re.IGNORECASE,
 )
 
+# Where a verbete's historical redactions begin (we keep the current wording)
 HISTORY_BOUNDARY = re.compile(
     r"^(Hist[óo]rico:|Reda[çc][ãõ]o\s+(original|anterior|nova)|"
     r"S[úu]mula\s+(alterada|mantida|cancelada|convertida|revisada|superada)|"
@@ -294,5 +297,4 @@ def load_verbetes(
 
 
 def console_log(msg: str) -> None:
-    """Simple console logging."""
     print(f"[INGEST] {msg}")

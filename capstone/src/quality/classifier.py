@@ -30,7 +30,6 @@ def run_quality_classification(collection_name: str) -> None:
     metadatas = result["metadatas"] or []
     ids = result["ids"] or []
 
-    # Extract heuristic labels
     y_heuristic = [m.get("quality_label", "normal") for m in metadatas]
     unique_labels = set(y_heuristic)
     console_log(
@@ -42,7 +41,7 @@ def run_quality_classification(collection_name: str) -> None:
         console_log("Only one class found, skipping supervised training")
         return
 
-    # TF-IDF features
+    # Weakly supervised: the rule-based labels above are the training targets
     vectorizer = TfidfVectorizer(
         max_features=settings.CLASSIFIER_MAX_FEATURES,
         ngram_range=settings.CLASSIFIER_NGRAM_RANGE,
@@ -52,14 +51,12 @@ def run_quality_classification(collection_name: str) -> None:
     )
     X = vectorizer.fit_transform(texts)
 
-    # Check class distribution for stratify
     from collections import Counter
 
     label_counts = Counter(y_heuristic)
     min_count = min(label_counts.values())
     use_stratify = min_count >= 2
 
-    # Train/test split
     X_train, X_test, y_train, y_test = train_test_split(
         X,
         y_heuristic,
@@ -71,7 +68,7 @@ def run_quality_classification(collection_name: str) -> None:
     if not use_stratify:
         console_log("Some classes have <2 samples, disabling stratify")
 
-    # Train LogisticRegression
+    # class_weight="balanced" compensates for the rare curto/duplicado classes
     clf = LogisticRegression(
         max_iter=1000,
         class_weight="balanced",
@@ -80,21 +77,17 @@ def run_quality_classification(collection_name: str) -> None:
     )
     clf.fit(X_train, y_train)
 
-    # Evaluate
     y_pred = clf.predict(X_test)
     console_log(f"\nClassification Report:\n{classification_report(y_test, y_pred)}")
 
-    # Predict all
     y_all_pred = clf.predict(X)
 
-    # Save model
     settings.MODELS_DIR.mkdir(parents=True, exist_ok=True)
     joblib.dump(
         {"vectorizer": vectorizer, "classifier": clf},
         settings.MODELS_DIR / "quality_classifier.joblib",
     )
 
-    # Update ChromaDB in batches
     console_log("Updating ChromaDB with predicted quality labels...")
     new_metadatas = []
     for m, pred in zip(metadatas, y_all_pred):
