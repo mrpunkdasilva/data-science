@@ -319,7 +319,7 @@ def pipeline(
             collection=collection,
             umap_neighbors=15,
             umap_min_dist=0.1,
-            hdbscan_min_cluster=10,
+            hdbscan_min_cluster=15,
             hdbscan_min_samples=5,
         )
     if not skip_quality:
