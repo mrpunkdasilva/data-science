@@ -224,7 +224,7 @@ def get_stats(collection_name: str = settings.COLLECTION_NAME) -> dict:
         anomaly_scores.append(float(m.get("anomaly_score", 0.0)))
 
     n_clusters = len([c for c in cluster_ids if c != -1])
-    noise_count = sum(1 for c in cluster_ids if c == -1)
+    noise_count = sum(1 for m in metadatas if int(m.get("cluster_id", -1)) == -1)
     anomaly_count = sum(1 for s in anomaly_scores if s > 0.7)
 
     return {
